@@ -182,6 +182,7 @@ class ImageFolder(data.Dataset):
         if is_train:
             random.shuffle(self.imgs)
 
+        self.is_attention = True
         print('\tdistance=%d/%d' % (args.distance1, args.distance2))
 
     def _load_image_list(self):
@@ -235,6 +236,14 @@ class ImageFolder(data.Dataset):
     def get_frame_data(self, filename):
         img = self.loader(filename)
         return img, filename
+
+    def attention_based_crops(self, img):
+        crops = []
+        for i in range(self._num_crops):
+            crop = crop_cv2(img, self.patch)
+            crop[..., :9] /= 255.0
+            crops.append(np_to_torch(crop))
+        return crops
 
     def __getitem__(self, index):
         filename = self.imgs[index]
@@ -290,7 +299,7 @@ class ImageFolder(data.Dataset):
         # CV2 cropping in CPU is faster.
         if self.is_train:
             if self.is_attention:
-                data = attentionBasedCrops(self._num_crops, img, self.patch)
+                data = self.attention_based_crops(img)
             else:
                 crops = []
                 for i in range(self._num_crops):
