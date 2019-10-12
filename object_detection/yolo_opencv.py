@@ -27,9 +27,10 @@ def draw_prediction(img, classes, COLORS, class_id, confidence, x, y, x_plus_w, 
     cv2.putText(img, label, (x-10,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
 
-def detect_objects(image, config='object_detection/yolov3.cfg', weights='object_detection/yolov3.weights', cls_file='object_detection/yolov3.txt'):
-    image = cv2.imread(image)
-    
+def detect_objects(image, is_image, config='object_detection/yolov3.cfg', weights='object_detection/yolov3.weights', cls_file='object_detection/yolov3.txt'):
+    if is_image:
+        image = cv2.imread(image)
+   
     Width = image.shape[1]
     Height = image.shape[0]
     scale = 0.00392
@@ -43,7 +44,8 @@ def detect_objects(image, config='object_detection/yolov3.cfg', weights='object_
     
     net = cv2.dnn.readNet(weights, config)
     
-    blob = cv2.dnn.blobFromImage(image, scale, (416,416), (0,0,0), True, crop=False)
+    #blob = cv2.dnn.blobFromImage(image, scale, (416,416), (0,0,0), True, crop=False)
+    blob = cv2.dnn.blobFromImage(image, scale, (352, 288), (0,0,0), True, crop=False)
     
     net.setInput(blob)
     
@@ -82,9 +84,9 @@ def detect_objects(image, config='object_detection/yolov3.cfg', weights='object_
         y = box[1]
         w = box[2]
         h = box[3]
-        objects.append([x, y, w, h])
+        objects.append([round(x), round(y), round(x+w), round(y+h)])
         #draw_prediction(image, classes, COLORS, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))
-    #cv2.imwrite("object-detection.jpg", image)
+    #cv2.imwrite(str(img_name[:-4].split('_')[:-1])+"-object-detection.jpg", image)
     return objects
 
 #image = 'dog.jpg'

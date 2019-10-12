@@ -135,7 +135,7 @@ while True:
         res, frame1, frame2, warped_unet_output1, warped_unet_output2 = prepare_inputs(
             crops, args, unet_output1, unet_output2)
 
-        print(res.shape, frame1.shape, frame2.shape)
+        #print(res.shape, frame1.shape, frame2.shape)
         losses = []
 
         bp_t0 = time.time()
@@ -195,7 +195,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 5000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10:
             print('Start evaluation...')
 
             set_eval(nets)

@@ -12,6 +12,7 @@ import torch.nn as nn
 import network
 from metric import msssim, psnr
 from unet import UNet
+from object_detection.yolo_opencv import detect_objects
 
 
 def get_models(args, v_compress, bits, encoder_fuse_level, decoder_fuse_level):
@@ -325,9 +326,26 @@ def as_img_array(image):
 def get_ms_ssim(original, compared):
     return msssim(as_img_array(original), as_img_array(compared))
 
+def get_croped_image(img, objects):
+    patch = 64 # assuming patch size is 64 from the vcii
+    height, width, c = img.shape
+    if len(objects) > 0:
+        start_x = objects[0][0] if objects[0][0] > 0 else 0
+        start_y = objects[0][1] if objects[0][1] > 0 else 0
+        if start_x > height-patch:
+            start_x = height-patch
+        if start_y > width-patch:
+            start_y = width-patch
+
+    return img[start_x : start_x + patch, start_y : start_y + patch]
 
 def get_psnr(original, compared):
-    return psnr(as_img_array(original), as_img_array(compared))
+    original, compared = as_img_array(original), as_img_array(compared)
+    objects = detect_objects(original[0], 0) # second argument 0 is for array, 1 is for image file name
+    orig_c = get_croped_image(original[0], objects)
+    comp_c = get_croped_image(compared[0], objects)
+    print(psnr(orig_c, comp_c), psnr(original, compared))
+    return psnr(original, compared)
 
 
 def warp_unet_outputs(flows, unet_output1, unet_output2):

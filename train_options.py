@@ -64,7 +64,7 @@ parser.add_argument('--eval-batch-size', type=int, default=1,
 
 # To save computation, we compute objective for multiple
 # crops for each forward pass.
-parser.add_argument('--num-crops', type=int, default=2,
+parser.add_argument('--num-crops', type=int, default=1,
                     help='# training crops per example.')
 parser.add_argument('--gpus', default='0', type=str,
                     help='GPU indices separated by comma, e.g. \"0,1\".')

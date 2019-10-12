@@ -7,6 +7,7 @@ import torch.utils.data as data
 import numpy as np
 import random
 import cv2
+from object_detection.yolo_opencv import detect_objects
 
 
 def get_loader(is_train, root, mv_dir, args):
@@ -101,6 +102,24 @@ def crop_cv2(img, patch):
     start_y = random.randint(0, width - patch)
 
     return img[start_x : start_x + patch, start_y : start_y + patch]
+
+def att_crop_cv2(img, patch, filename):
+    height, width, c = img.shape
+    objects = detect_objects(filename, 1)
+    if len(objects) > 0:
+        start_x = objects[0][0] if objects[0][0] > 0 else 0
+        start_y = objects[0][1] if objects[0][1] > 0 else 0
+        if start_x > height-patch:
+            start_x = height-patch
+        if start_y > width-patch:
+            start_y = width-patch
+    else:
+        start_x = random.randint(0, height - patch)
+        start_y = random.randint(0, width - patch)
+    #print(start_x, start_y, start_x + patch, start_y + patch)
+
+    return img[start_x : start_x + patch, start_y : start_y + patch]
+
 
 
 def flip_cv2(img, patch):
@@ -237,10 +256,10 @@ class ImageFolder(data.Dataset):
         img = self.loader(filename)
         return img, filename
 
-    def attention_based_crops(self, img):
+    def attention_based_crops(self, img, filename):
         crops = []
         for i in range(self._num_crops):
-            crop = crop_cv2(img, self.patch)
+            crop = att_crop_cv2(img, self.patch, filename)
             crop[..., :9] /= 255.0
             crops.append(np_to_torch(crop))
         return crops
@@ -299,7 +318,7 @@ class ImageFolder(data.Dataset):
         # CV2 cropping in CPU is faster.
         if self.is_train:
             if self.is_attention:
-                data = self.attention_based_crops(img)
+                data = self.attention_based_crops(img, filename)
             else:
                 crops = []
                 for i in range(self._num_crops):
