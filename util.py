@@ -299,8 +299,10 @@ def evaluate(original, out_imgs):
 
     ms_ssims = np.array([get_ms_ssim(original, out_img) for out_img in out_imgs])
     psnrs    = np.array([   get_psnr(original, out_img) for out_img in out_imgs])
+    att_ms_ssims = np.array([get_att_ms_ssim(original, out_img) for out_img in out_imgs])
+    att_psnrs    = np.array([   get_att_psnr(original, out_img) for out_img in out_imgs])
 
-    return ms_ssims, psnrs
+    return ms_ssims, psnrs, att_ms_ssims, att_psnrs
 
 
 def evaluate_all(original, out_imgs):
@@ -323,9 +325,6 @@ def as_img_array(image):
     return image.astype(np.uint8).transpose(0, 2, 3, 1)
 
 
-def get_ms_ssim(original, compared):
-    return msssim(as_img_array(original), as_img_array(compared))
-
 def get_croped_image(img, objects):
     patch = 64 # assuming patch size is 64 from the vcii
     height, width, c = img.shape
@@ -339,12 +338,26 @@ def get_croped_image(img, objects):
 
     return img[start_x : start_x + patch, start_y : start_y + patch]
 
-def get_psnr(original, compared):
+def get_att_ms_ssim(original, compared):
     original, compared = as_img_array(original), as_img_array(compared)
     objects = detect_objects(original[0], 0) # second argument 0 is for array, 1 is for image file name
     orig_c = get_croped_image(original[0], objects)
     comp_c = get_croped_image(compared[0], objects)
-    print(psnr(orig_c, comp_c), psnr(original, compared))
+    return msssim(orig_c, comp_c)
+
+def get_att_psnr(original, compared):
+    original, compared = as_img_array(original), as_img_array(compared)
+    objects = detect_objects(original[0], 0) # second argument 0 is for array, 1 is for image file name
+    orig_c = get_croped_image(original[0], objects)
+    comp_c = get_croped_image(compared[0], objects)
+    return psnr(orig_c, comp_c)
+
+def get_ms_ssim(original, compared):
+    original, compared = as_img_array(original), as_img_array(compared)
+    return msssim(original, compared)
+
+def get_psnr(original, compared):
+    original, compared = as_img_array(original), as_img_array(compared)
     return psnr(original, compared)
 
 

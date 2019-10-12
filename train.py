@@ -195,7 +195,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 2000:
             print('Start evaluation...')
 
             set_eval(nets)
@@ -203,7 +203,7 @@ while True:
             eval_loaders = get_eval_loaders()
             for eval_name, eval_loader in eval_loaders.items():
                 eval_begin = time.time()
-                eval_loss, mssim, psnr = run_eval(nets, eval_loader, args,
+                eval_loss, mssim, psnr, att_msssim, att_psnr = run_eval(nets, eval_loader, args,
                     output_suffix='iter%d' % train_iter)
 
                 print('Evaluation @iter %d done in %d secs' % (
@@ -212,8 +212,12 @@ while True:
                       + '\t'.join(['%.5f' % el for el in eval_loss.tolist()]))
                 print('%s MS-SSIM: ' % eval_name
                       + '\t'.join(['%.5f' % el for el in mssim.tolist()]))
+                print('%s ATT MS-SSIM: ' % eval_name
+                      + '\t'.join(['%.5f' % el for el in att_msssim.tolist()]))
                 print('%s PSNR   : ' % eval_name
                       + '\t'.join(['%.5f' % el for el in psnr.tolist()]))
+                print('%s ATT PSNR   : ' % eval_name
+                      + '\t'.join(['%.5f' % el for el in att_psnr.tolist()]))
 
             set_train(nets)
             just_resumed = False
