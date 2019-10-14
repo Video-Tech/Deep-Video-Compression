@@ -86,8 +86,8 @@ def detect_objects(image, is_image, config='object_detection/yolov3.cfg', weight
         w = box[2]
         h = box[3]
         objects.append([round(x), round(y), round(x+w), round(y+h)])
-        draw_prediction(image, classes, COLORS, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))
-    cv2.imwrite("object-detection.jpg", image)
+        #draw_prediction(image, classes, COLORS, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))
+    #cv2.imwrite("object-detection.jpg", image)
     return objects
 
 #image = 'dog.jpg'
