@@ -201,7 +201,7 @@ class ImageFolder(data.Dataset):
         if is_train:
             random.shuffle(self.imgs)
 
-        self.is_attention = True
+        self.is_attention = False
         print('\tdistance=%d/%d' % (args.distance1, args.distance2))
 
     def _load_image_list(self):

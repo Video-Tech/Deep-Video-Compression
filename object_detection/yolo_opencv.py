@@ -63,6 +63,7 @@ def detect_objects(image, is_image, config='object_detection/yolov3.cfg', weight
             class_id = np.argmax(scores)
             confidence = scores[class_id]
             if confidence > 0.5:
+                print(len(detection), detection)
                 center_x = int(detection[0] * Width)
                 center_y = int(detection[1] * Height)
                 w = int(detection[2] * Width)
@@ -85,8 +86,8 @@ def detect_objects(image, is_image, config='object_detection/yolov3.cfg', weight
         w = box[2]
         h = box[3]
         objects.append([round(x), round(y), round(x+w), round(y+h)])
-        #draw_prediction(image, classes, COLORS, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))
-    #cv2.imwrite(str(img_name[:-4].split('_')[:-1])+"-object-detection.jpg", image)
+        draw_prediction(image, classes, COLORS, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))
+    cv2.imwrite("object-detection.jpg", image)
     return objects
 
 #image = 'dog.jpg'
@@ -94,6 +95,6 @@ def detect_objects(image, is_image, config='object_detection/yolov3.cfg', weight
 #weights = 'yolov3.weights'
 #classes = 'yolov3.txt'
 #
-#objects = detect_objects(image, cfile, weights, classes)
+#objects = detect_objects(image, 1, cfile, weights, classes)
 #
 #print (objects)

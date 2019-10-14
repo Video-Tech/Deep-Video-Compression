@@ -13,6 +13,7 @@ from evaluate import run_eval
 from train_options import parser
 from util import get_models, init_lstm, set_train, set_eval
 from util import prepare_inputs, forward_ctx
+from saliency.static_saliency import saliency_map
 
 args = parser.parse_args()
 print(args)
@@ -92,6 +93,15 @@ def save(index):
                    names[net_idx], index))
 
 
+def get_saliency_map(frames):
+    sm = []
+    for frame in frames:
+        frame = frame.cpu().numpy()
+        frame = np.swapaxes(frame, 0, 2)
+        m = saliency_map(frame*255, 0)
+        sm.append(m)
+    return np.array(sm)
+
 ############### Training ###############
 
 train_iter = 0
@@ -112,6 +122,7 @@ while True:
         scheduler.step()
         train_iter += 1
 
+        #print(len(crops), crops[0].shape)
         if train_iter > args.max_train_iters:
           break
 
@@ -143,6 +154,8 @@ while True:
 
         out_img = torch.zeros(1, 3, height, width).cuda() + 0.5
 
+        sm = get_saliency_map(frame1) # Att
+
         for _ in range(args.iterations):
             if args.v_compress and args.stack:
                 encoder_input = torch.cat([frame1, res, frame2], dim=1)
@@ -163,6 +176,9 @@ while True:
                 warped_unet_output1, warped_unet_output2)
 
             res = res - output
+            res = res.transpose(1,3) # Att
+            res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
+            res = res.transpose(1,3) #Att
             out_img = out_img + output.data
             losses.append(res.abs().mean())
 

@@ -27,7 +27,7 @@ parser.add_argument('--iterations', type=int, default=10,
                     help='# iterations of progressive encoding/decoding.')
 parser.add_argument('--bits', default=16, type=int, 
                     help='Bottle neck size.')
-parser.add_argument('--patch', default=64, type=int, 
+parser.add_argument('--patch', default=128, type=int, 
                     help='Patch size.')
 parser.add_argument('--shrink', type=int, default=2, 
                     help='Reducing # channels in U-net by this factor.')
