@@ -63,7 +63,7 @@ def detect_objects(image, is_image, config='object_detection/yolov3.cfg', weight
             class_id = np.argmax(scores)
             confidence = scores[class_id]
             if confidence > 0.5:
-                print(len(detection), detection)
+                #print(len(detection), detection)
                 center_x = int(detection[0] * Width)
                 center_y = int(detection[1] * Height)
                 w = int(detection[2] * Width)

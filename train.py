@@ -156,7 +156,7 @@ while True:
 
         sm = get_saliency_map(frame1) # Att
 
-        for _ in range(args.iterations):
+        for itr in range(args.iterations):
             if args.v_compress and args.stack:
                 encoder_input = torch.cat([frame1, res, frame2], dim=1)
             else:
@@ -176,9 +176,10 @@ while True:
                 warped_unet_output1, warped_unet_output2)
 
             res = res - output
-            res = res.transpose(1,3) # Att
-            res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
-            res = res.transpose(1,3) #Att
+            if itr == 0:
+                res = res.transpose(1,3) # Att
+                res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
+                res = res.transpose(1,3) #Att
             out_img = out_img + output.data
             losses.append(res.abs().mean())
 
@@ -211,7 +212,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 2000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 1000:
             print('Start evaluation...')
 
             set_eval(nets)
