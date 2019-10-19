@@ -1,7 +1,9 @@
 import cv2
 import numpy as np
 
-def get_mv(image1, image2):
+dir = "/data/eval"
+
+def get_mv(image1, image2, after):
     frame1 = cv2.imread('eval1/'+image1)
     frame2 = cv2.imread('eval1/'+image2)
     
@@ -15,12 +17,14 @@ def get_mv(image1, image2):
     vert = cv2.normalize(flow[...,1], None, 0, 255, cv2.NORM_MINMAX)
     horz = horz.astype('uint8')
     vert = vert.astype('uint8')
-    
-    #cv2.imwrite('eval1_mv/'+image2[:-4]+'_before_flow_x_0001.jpg', horz)
-    #cv2.imwrite('eval1_mv/'+image2[:-4]+'_before_flow_y_0001.jpg', vert)
-    cv2.imwrite('eval1_mv/'+image2[:-4]+'_after_flow_x_0001.jpg', horz)
-    cv2.imwrite('eval1_mv/'+image2[:-4]+'_after_flow_y_0001.jpg', vert)
+
+    if after:
+	cv2.imwrite('eval1_mv/'+image2[:-4]+'_after_flow_x_0001.jpg', horz)
+    	cv2.imwrite('eval1_mv/'+image2[:-4]+'_after_flow_y_0001.jpg', vert)
+    else:
+	cv2.imwrite('eval1_mv/'+image2[:-4]+'_before_flow_x_0001.jpg', horz)
+    	cv2.imwrite('eval1_mv/'+image2[:-4]+'_before_flow_y_0001.jpg', vert)
     #cv2.imshow('Horizontal Component', horz)
     #cv2.imshow('Vertical Component', vert)
 
-get_mv('out_0013.png', 'out_0011.png')
+get_mv('out_0013.png', 'out_0011.png', true)

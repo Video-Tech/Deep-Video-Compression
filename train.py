@@ -36,7 +36,6 @@ def get_eval_loaders():
   return eval_loaders
 
 
-
 ############### Model ###############
 encoder, binarizer, decoder, unet = get_models(
   args=args, v_compress=args.v_compress, 
@@ -212,7 +211,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 3000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10:
             print('Start evaluation...')
 
             set_eval(nets)
