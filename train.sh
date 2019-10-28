@@ -7,9 +7,14 @@ hier=$1
 modeldir=model
 
 train="../data/new-data/train"
-eval="../data/new-data/train"
+#eval="../data/new-data/train"
 train_mv="../data/new-data/train_mv"
-eval_mv="../data/new-data/train_mv"
+#eval_mv="../data/new-data/train_mv"
+#train="../data/train"
+eval="../data/eval"
+#train_mv="../data/train_mv"
+eval_mv="../data/eval_mv"
+
 
 if [[ ${hier} == "0" ]]; then
   distance1=6

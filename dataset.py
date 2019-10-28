@@ -43,8 +43,8 @@ def default_loader(path):
         cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
 
     width, height, _ = cv2_img.shape
-    #if width % 16 != 0 or height % 16 != 0:
-    #    cv2_img = cv2_img[:(width//16)*16, :(height//16)*16]
+    if width % 16 != 0 or height % 16 != 0:
+        cv2_img = cv2_img[:(width//16)*16, :(height//16)*16]
 
     return cv2_img
 
@@ -53,8 +53,8 @@ def read_bmv(fn):
     a = cv2.imread(fn, 0)
     if a is not None:
         width, height = a.shape
-        #if width % 16 != 0 or height % 16 != 0:
-        #    a = a[:(width//16)*16, :(height//16)*16]
+        if width % 16 != 0 or height % 16 != 0:
+            a = a[:(width//16)*16, :(height//16)*16]
 
         return a[:, :, np.newaxis].astype(float) - 128.0
     else:
@@ -271,7 +271,6 @@ class ImageFolder(data.Dataset):
             img, main_fn = self.get_group_data(filename)
         else:
             img, main_fn = self.get_frame_data(filename)
-        print(img.shape)
 
         if self.args.warp:
             bmv = np.concatenate(get_bmv(
@@ -297,7 +296,6 @@ class ImageFolder(data.Dataset):
             bmv[:, :, 2] = bmv[:, :, 2] / height
             bmv[:, :, 3] = bmv[:, :, 3] / width
 
-        print(bmv.shape)
         img = np.concatenate([img, bmv], axis=2)
 
         assert img.shape[2] == 13
