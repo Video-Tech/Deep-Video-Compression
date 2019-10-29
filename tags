@@ -5,6 +5,8 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 Binarizer	network.py	/^class Binarizer(nn.Module):$/;"	c
+CAST	extract_mv/draw_flow.cpp	27;"	d	file:
+CAST	extract_mv/draw_flow.cpp	40;"	d	file:
 ConvLSTMCell	modules/conv_rnn.py	/^class ConvLSTMCell(ConvRNNCellBase):$/;"	c
 ConvRNNCellBase	modules/conv_rnn.py	/^class ConvRNNCellBase(nn.Module):$/;"	c
 DecoderCell	network.py	/^class DecoderCell(nn.Module):$/;"	c
@@ -33,6 +35,8 @@ __init__	unet_parts.py	/^    def __init__(self, in_ch, out_ch, bilinear=True):$/
 __len__	dataset.py	/^    def __len__(self):$/;"	m	class:ImageFolder	file:
 __repr__	modules/conv_rnn.py	/^    def __repr__(self):$/;"	m	class:ConvRNNCellBase	file:
 _load_image_list	dataset.py	/^    def _load_image_list(self):$/;"	m	class:ImageFolder
+ap	saliency/objectness_saliency.py	/^ap = argparse.ArgumentParser()$/;"	v
+args	saliency/objectness_saliency.py	/^args = vars(ap.parse_args())$/;"	v
 args	train.py	/^  args=args$/;"	v
 args	train.py	/^args = parser.parse_args()$/;"	v
 as_img_array	util.py	/^def as_img_array(image):$/;"	f
@@ -46,10 +50,15 @@ bits	train.py	/^  bits=args.bits,$/;"	v
 bp_t0	train.py	/^        bp_t0 = time.time()$/;"	v
 bp_t1	train.py	/^        bp_t1 = time.time()$/;"	v
 codes	train.py	/^            codes = binarizer(encoded)$/;"	v
+color	saliency/objectness_saliency.py	/^	color = [int(c) for c in color]$/;"	v
+color	saliency/objectness_saliency.py	/^	color = np.random.randint(0, 255, size=(3,))$/;"	v
+convertFlowToImage	extract_mv/draw_flow.cpp	/^static void convertFlowToImage(const Mat &flow_x, const Mat &flow_y, Mat &img_x, Mat &img_y,$/;"	f	file:
 crop_cv2	dataset.py	/^def crop_cv2(img, patch):$/;"	f
 decoder_fuse_level	train.py	/^  decoder_fuse_level=args.decoder_fuse_level)$/;"	v
 default_loader	dataset.py	/^def default_loader(path):$/;"	f
-detect_objects	object_detection/yolo_opencv.py	/^def detect_objects(image, config='object_detection\/yolov3.cfg', weights='object_detection\/yolov3.weights', cls_file='object_detection\/yolov3.txt'):$/;"	f
+detect_objects	object_detection/yolo_opencv.py	/^def detect_objects(image, is_image, config='object_detection\/yolov3.cfg', weights='object_detection\/yolov3.weights', cls_file='object_detection\/yolov3.txt'):$/;"	f
+dir	extract_mv.py	/^dir = "data\/train2_1"$/;"	v
+dir	vtl/extract_mv.py	/^dir = "\/data\/eval"$/;"	v
 double_conv	unet_parts.py	/^class double_conv(nn.Module):$/;"	c
 down	unet_parts.py	/^class down(nn.Module):$/;"	c
 down_sample	util.py	/^down_sample = nn.AvgPool2d(2, stride=2)$/;"	v
@@ -62,6 +71,7 @@ eval_forward	util.py	/^def eval_forward(model, batch, args):$/;"	f
 eval_loaders	train.py	/^            eval_loaders = get_eval_loaders()$/;"	v
 evaluate	util.py	/^def evaluate(original, out_imgs):$/;"	f
 evaluate_all	util.py	/^def evaluate_all(original, out_imgs):$/;"	f
+files	preparation/prepare_data.py	/^files = os.listdir('video\/')$/;"	v
 finish_batch	evaluate.py	/^def finish_batch(args, filenames, original, out_imgs,$/;"	f
 flip_cv2	dataset.py	/^def flip_cv2(img, patch):$/;"	f
 forward	functions/sign.py	/^    def forward(ctx, input, is_training=True):$/;"	m	class:Sign
@@ -78,9 +88,16 @@ forward	unet_parts.py	/^    def forward(self, x):$/;"	m	class:outconv
 forward	unet_parts.py	/^    def forward(self, x1, x2):$/;"	m	class:up
 forward_ctx	util.py	/^def forward_ctx(unet, ctx_frames):$/;"	f
 forward_model	util.py	/^def forward_model(model, cooked_batch, ctx_frames, args, v_compress,$/;"	f
+frame	saliency/motion_saliency.py	/^	frame = imutils.resize(frame, width=500)$/;"	v
+frame	saliency/motion_saliency.py	/^	frame = vs.read()$/;"	v
+gdir	preparation/prepare_data.py	/^gdir = 'train_gaze\/'$/;"	v
+get_att_ms_ssim	util.py	/^def get_att_ms_ssim(original, compared):$/;"	f
+get_att_psnr	util.py	/^def get_att_psnr(original, compared):$/;"	f
 get_bmv	dataset.py	/^def get_bmv(img, fns):$/;"	f
 get_bmv_filenames	dataset.py	/^def get_bmv_filenames(mv_dir, main_fn):$/;"	f
+get_croped_image	util.py	/^def get_croped_image(img, objects):$/;"	f
 get_eval_loaders	train.py	/^def get_eval_loaders():$/;"	f
+get_filenames	extract_mv.py	/^def get_filenames(images, idx):$/;"	f
 get_flows	util.py	/^def get_flows(flow):$/;"	f
 get_frame_data	dataset.py	/^    def get_frame_data(self, filename):$/;"	m	class:ImageFolder
 get_group_data	dataset.py	/^    def get_group_data(self, filename):$/;"	m	class:ImageFolder
@@ -92,9 +109,18 @@ get_large_id_grid	util.py	/^def get_large_id_grid(size):$/;"	f
 get_loader	dataset.py	/^def get_loader(is_train, root, mv_dir, args):$/;"	f
 get_models	util.py	/^def get_models(args, v_compress, bits, encoder_fuse_level, decoder_fuse_level):$/;"	f
 get_ms_ssim	util.py	/^def get_ms_ssim(original, compared):$/;"	f
+get_mv	extract_mv.py	/^def get_mv(image1, image2, after):$/;"	f
+get_mv	vtl/extract_mv.py	/^def get_mv(image1, image2, after):$/;"	f
+get_names	extract_mv.py	/^def get_names(old_names, idx):$/;"	f
 get_output_layers	object_detection/yolo_opencv.py	/^def get_output_layers(net):$/;"	f
 get_psnr	util.py	/^def get_psnr(original, compared):$/;"	f
+get_saliency_map	train.py	/^def get_saliency_map(frames):$/;"	f
+gfiles	preparation/prepare_data.py	/^    gfiles = ["%04d" % (x+1) for x in range(97)]$/;"	v
 gpus	train.py	/^gpus = [int(gpu) for gpu in args.gpus.split(',')]$/;"	v
+gray	saliency/motion_saliency.py	/^	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)$/;"	v
+help	saliency/objectness_saliency.py	/^	help="maximum # of detections to examine")$/;"	v
+help	saliency/objectness_saliency.py	/^	help="path to BING objectness saliency model")$/;"	v
+help	saliency/objectness_saliency.py	/^	help="path to input image")$/;"	v
 help	train_options.py	/^                    help='# decoder layers to fuse context information into.')$/;"	v
 help	train_options.py	/^                    help='# encoder layers to fuse context information into.')$/;"	v
 help	train_options.py	/^                    help='# iterations of progressive encoding\/decoding.')$/;"	v
@@ -129,26 +155,36 @@ help	train_options.py	/^                    help='True: video compression model.
 help	train_options.py	/^                    help='Whether to fuse context features into encoder.')$/;"	v
 help	train_options.py	/^                    help='Whether to stack context frames as encoder input.')$/;"	v
 help	train_options.py	/^                    help='Whether to use motion information to warp U-net features.')$/;"	v
+idir	preparation/prepare_data.py	/^idir = 'video\/'$/;"	v
 image	detect_objects.py	/^image   = 'object_detection\/dog.jpg'$/;"	v
+image	saliency/objectness_saliency.py	/^image = cv2.imread(args["image"])$/;"	v
+img_idx	extract_mv.py	/^	img_idx = int(images[:-4].split('_')[-1])$/;"	v
 inconv	unet_parts.py	/^class inconv(nn.Module):$/;"	c
 init_lstm	util.py	/^def init_lstm(batch_size, height, width, args):$/;"	f
 is_train	train.py	/^  is_train=True,$/;"	v
 just_resumed	train.py	/^            just_resumed = False$/;"	v
 just_resumed	train.py	/^    just_resumed = True$/;"	v
 just_resumed	train.py	/^just_resumed = False$/;"	v
+key	saliency/motion_saliency.py	/^	key = cv2.waitKey(1) & 0xFF$/;"	v
 loss	train.py	/^        loss = sum(losses) \/ args.iterations$/;"	v
 losses	train.py	/^        losses = []$/;"	v
 lr	train.py	/^    lr=args.lr)$/;"	v
+main	extract_mv/draw_flow.cpp	/^int main(int argc, char** argv){$/;"	f
 main	metric.py	/^def main():$/;"	f
 milestones	train.py	/^milestones = [int(s) for s in args.schedule.split(',')]$/;"	v
 msssim	metric.py	/^def msssim(original, compared):$/;"	f
 net	train.py	/^    net = nn.DataParallel(net, device_ids=gpus)$/;"	v
 nets	train.py	/^nets = [encoder, binarizer, decoder]$/;"	v
 np_to_torch	dataset.py	/^def np_to_torch(img):$/;"	f
+numDetections	saliency/objectness_saliency.py	/^numDetections = saliencyMap.shape[0]$/;"	v
 objects	detect_objects.py	/^objects = detect_objects(image)$/;"	v
+odir	preparation/prepare_data.py	/^odir = 'train\/'$/;"	v
+original	extract_mv.py	/^	original = images.split('\/')[-1]$/;"	v
 out_img	train.py	/^            out_img = out_img + output.data$/;"	v
 out_img	train.py	/^        out_img = torch.zeros(1, 3, height, width).cuda() + 0.5$/;"	v
 outconv	unet_parts.py	/^class outconv(nn.Module):$/;"	c
+output	extract_mv.py	/^output = dir + "_mv1"$/;"	v
+output	saliency/objectness_saliency.py	/^	output = image.copy()$/;"	v
 output_suffix	train.py	/^                    output_suffix='iter%d' % train_iter)$/;"	v
 params	train.py	/^params = [{'params': net.parameters()} for net in nets]$/;"	v
 parser	train_options.py	/^parser = argparse.ArgumentParser()$/;"	v
@@ -157,10 +193,19 @@ prepare_inputs	util.py	/^def prepare_inputs(crops, args, unet_output1, unet_outp
 prepare_unet_output	util.py	/^def prepare_unet_output(unet, unet_input, flows, warp):$/;"	f
 psnr	metric.py	/^def psnr(original, compared):$/;"	f
 read_bmv	dataset.py	/^def read_bmv(fn):$/;"	f
+rem	extract_mv.py	/^	rem = img_idx%13$/;"	v
+res	train.py	/^                res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att$/;"	v
+res	train.py	/^                res = res.transpose(1,3) # Att$/;"	v
+res	train.py	/^                res = res.transpose(1,3) #Att$/;"	v
 res	train.py	/^            res = res - output$/;"	v
 reset_parameters	modules/conv_rnn.py	/^    def reset_parameters(self):$/;"	m	class:ConvLSTMCell
 resume	train.py	/^def resume(index):$/;"	f
 run_eval	evaluate.py	/^def run_eval(model, eval_loader, args, output_suffix=''):$/;"	f
+saliency	saliency/motion_saliency.py	/^		saliency = cv2.saliency.MotionSaliencyBinWangApr2014_create()$/;"	v
+saliency	saliency/motion_saliency.py	/^saliency = None$/;"	v
+saliency	saliency/objectness_saliency.py	/^saliency = cv2.saliency.ObjectnessBING_create()$/;"	v
+saliencyMap	saliency/motion_saliency.py	/^	saliencyMap = (saliencyMap * 255).astype("uint8")$/;"	v
+saliency_map	saliency/static_saliency.py	/^def saliency_map(image, is_image):$/;"	f
 save	train.py	/^def save(index):$/;"	f
 save_codes	evaluate.py	/^def save_codes(name, codes):$/;"	f
 save_numpy_array_as_image	util.py	/^def save_numpy_array_as_image(filename, arr):$/;"	f
@@ -169,6 +214,7 @@ save_torch_array_as_image	util.py	/^def save_torch_array_as_image(filename, arr)
 scheduler	train.py	/^scheduler = LS.MultiStepLR(solver, milestones=milestones, gamma=args.gamma)$/;"	v
 set_eval	util.py	/^def set_eval(models):$/;"	f
 set_train	util.py	/^def set_train(models):$/;"	f
+sm	train.py	/^        sm = get_saliency_map(frame1) # Att$/;"	v
 solver	train.py	/^solver = optim.Adam($/;"	v
 train_iter	train.py	/^    train_iter = args.load_iter$/;"	v
 train_iter	train.py	/^train_iter = 0$/;"	v
@@ -177,5 +223,6 @@ transpose_to_grid	util.py	/^def transpose_to_grid(frame2):$/;"	f
 unet_output1	train.py	/^            unet_output1 = Variable(torch.zeros(args.batch_size,)).cuda()$/;"	v
 unet_output2	train.py	/^            unet_output2 = Variable(torch.zeros(args.batch_size,)).cuda()$/;"	v
 up	unet_parts.py	/^class up(nn.Module):$/;"	c
+vs	saliency/motion_saliency.py	/^vs = VideoStream(src=0).start()$/;"	v
 warp_unet_outputs	util.py	/^def warp_unet_outputs(flows, unet_output1, unet_output2):$/;"	f
 width	train.py	/^            width=crops[0].size(3), args=args)$/;"	v
