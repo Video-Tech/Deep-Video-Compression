@@ -55,7 +55,7 @@ python3 -u train.py \
   --v-compress --warp --stack --fuse-encoder \
   --bits ${bits} \
   --distance1 ${distance1} --distance2 ${distance2} \
-  --max-train-iters 200 \
+  --max-train-iters 1000 \
   --save-model-name "gaze_model" \
   --save-codes \
   --save-out-img
