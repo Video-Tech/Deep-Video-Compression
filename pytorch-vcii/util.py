@@ -299,8 +299,10 @@ def evaluate(original, out_imgs):
 
     ms_ssims = np.array([get_ms_ssim(original, out_img) for out_img in out_imgs])
     psnrs    = np.array([   get_psnr(original, out_img) for out_img in out_imgs])
-    att_ms_ssims = np.array([get_att_ms_ssim(original, out_img) for out_img in out_imgs])
-    att_psnrs    = np.array([   get_att_psnr(original, out_img) for out_img in out_imgs])
+    #att_ms_ssims = np.array([get_att_ms_ssim(original, out_img) for out_img in out_imgs])
+    #att_psnrs    = np.array([   get_att_psnr(original, out_img) for out_img in out_imgs])
+    att_ms_ssims = 0
+    att_psnrs = 0
 
     return ms_ssims, psnrs, att_ms_ssims, att_psnrs
 

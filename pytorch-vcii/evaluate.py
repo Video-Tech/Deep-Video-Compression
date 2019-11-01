@@ -58,8 +58,8 @@ def finish_batch(args, filenames, original, out_imgs,
       all_losses.append(losses)
       all_msssim.append(msssim)
       all_psnr.append(psnr)
-      all_att_msssim.append(attmsssim)
-      all_att_psnr.append(attpsnr)
+      #all_att_msssim.append(attmsssim)
+      #all_att_psnr.append(attpsnr)
 
   return all_losses, all_msssim, all_psnr, all_att_msssim, all_att_psnr
 

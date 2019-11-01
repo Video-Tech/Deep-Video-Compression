@@ -228,12 +228,12 @@ while True:
                       + '\t'.join(['%.5f' % el for el in eval_loss.tolist()]))
                 print('%s MS-SSIM: ' % eval_name
                       + '\t'.join(['%.5f' % el for el in mssim.tolist()]))
-                print('%s ATT MS-SSIM: ' % eval_name
-                      + '\t'.join(['%.5f' % el for el in att_msssim.tolist()]))
+                #print('%s ATT MS-SSIM: ' % eval_name
+                #      + '\t'.join(['%.5f' % el for el in att_msssim.tolist()]))
                 print('%s PSNR   : ' % eval_name
                       + '\t'.join(['%.5f' % el for el in psnr.tolist()]))
-                print('%s ATT PSNR   : ' % eval_name
-                      + '\t'.join(['%.5f' % el for el in att_psnr.tolist()]))
+                #print('%s ATT PSNR   : ' % eval_name
+                #      + '\t'.join(['%.5f' % el for el in att_psnr.tolist()]))
 
             set_train(nets)
             just_resumed = False
