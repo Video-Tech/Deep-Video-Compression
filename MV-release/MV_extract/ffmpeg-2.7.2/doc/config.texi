@@ -76,21 +76,21 @@
 @c @set have-power8-external no
 @c @set have-ppc4xx-external no
 @c @set have-vsx-external no
-@set have-amd3dnow-external yes
-@set have-amd3dnowext-external yes
-@set have-avx-external yes
-@set have-avx2-external yes
-@set have-fma3-external yes
-@set have-fma4-external yes
-@set have-mmx-external yes
-@set have-mmxext-external yes
-@set have-sse-external yes
-@set have-sse2-external yes
-@set have-sse3-external yes
-@set have-sse4-external yes
-@set have-sse42-external yes
-@set have-ssse3-external yes
-@set have-xop-external yes
+@c @set have-amd3dnow-external no
+@c @set have-amd3dnowext-external no
+@c @set have-avx-external no
+@c @set have-avx2-external no
+@c @set have-fma3-external no
+@c @set have-fma4-external no
+@c @set have-mmx-external no
+@c @set have-mmxext-external no
+@c @set have-sse-external no
+@c @set have-sse2-external no
+@c @set have-sse3-external no
+@c @set have-sse4-external no
+@c @set have-sse42-external no
+@c @set have-ssse3-external no
+@c @set have-xop-external no
 @c @set have-cpunop-external no
 @c @set have-i686-external no
 @c @set have-mipsfpu-external no
@@ -161,7 +161,7 @@
 @set have-sync-val-compare-and-swap yes
 @set have-inline-asm yes
 @set have-symver yes
-@set have-yasm yes
+@c @set have-yasm no
 @c @set have-bigendian no
 @set have-fast-unaligned yes
 @c @set have-incompatible-libav-abi no
@@ -258,7 +258,7 @@
 @set have-gmtime-r yes
 @set have-inet-aton yes
 @set have-isatty yes
-@set have-jack-port-get-latency-range yes
+@c @set have-jack-port-get-latency-range no
 @c @set have-kbhit no
 @set have-localtime-r yes
 @c @set have-lzo1x-999-compress no
@@ -328,23 +328,23 @@
 @c @set have-libc-msvcrt no
 @c @set have-libdc1394-1 no
 @c @set have-libdc1394-2 no
-@c @set have-makeinfo no
-@c @set have-makeinfo-html no
+@set have-makeinfo yes
+@set have-makeinfo-html yes
 @set have-perl yes
 @set have-pod2man yes
 @set have-sdl yes
 @set have-section-data-rel-ro yes
-@set have-texi2html yes
+@c @set have-texi2html no
 @set have-threads yes
-@set have-vaapi-x11 yes
-@set have-vdpau-x11 yes
+@c @set have-vaapi-x11 no
+@c @set have-vdpau-x11 no
 @set have-xlib yes
 @set config-bsfs yes
 @set config-decoders yes
 @set config-demuxers yes
 @set config-encoders yes
 @set config-filters yes
-@set config-hwaccels yes
+@c @set config-hwaccels no
 @set config-indevs yes
 @set config-muxers yes
 @set config-outdevs yes
@@ -354,7 +354,7 @@
 @set config-htmlpages yes
 @set config-manpages yes
 @set config-podpages yes
-@c @set config-txtpages no
+@set config-txtpages yes
 @set config-avio-reading-example yes
 @set config-avio-list-dir-example yes
 @set config-decoding-encoding-example yes
@@ -372,7 +372,7 @@
 @set config-transcode-aac-example yes
 @set config-transcoding-example yes
 @c @set config-avisynth no
-@c @set config-bzlib no
+@set config-bzlib yes
 @c @set config-crystalhd no
 @c @set config-decklink no
 @c @set config-frei0r no
@@ -388,7 +388,7 @@
 @c @set config-libcelt no
 @c @set config-libdc1394 no
 @c @set config-libdcadec no
-@set config-libfaac yes
+@c @set config-libfaac no
 @c @set config-libfdk-aac no
 @c @set config-libflite no
 @c @set config-libfontconfig no
@@ -400,10 +400,10 @@
 @c @set config-libilbc no
 @c @set config-libmfx no
 @c @set config-libmodplug no
-@set config-libmp3lame yes
+@c @set config-libmp3lame no
 @c @set config-libnut no
-@set config-libopencore-amrnb yes
-@set config-libopencore-amrwb yes
+@c @set config-libopencore-amrnb no
+@c @set config-libopencore-amrwb no
 @c @set config-libopencv no
 @c @set config-libopenh264 no
 @c @set config-libopenjpeg no
@@ -418,25 +418,25 @@
 @c @set config-libspeex no
 @c @set config-libssh no
 @c @set config-libstagefright-h264 no
-@set config-libtheora yes
+@c @set config-libtheora no
 @c @set config-libtwolame no
 @c @set config-libutvideo no
 @c @set config-libv4l2 no
 @c @set config-libvidstab no
 @c @set config-libvo-aacenc no
 @c @set config-libvo-amrwbenc no
-@set config-libvorbis yes
+@c @set config-libvorbis no
 @c @set config-libvpx no
 @c @set config-libwavpack no
 @c @set config-libwebp no
-@set config-libx264 yes
+@c @set config-libx264 no
 @c @set config-libx265 no
 @c @set config-libxavs no
 @set config-libxcb yes
 @set config-libxcb-shm yes
 @set config-libxcb-shape yes
 @set config-libxcb-xfixes yes
-@set config-libxvid yes
+@c @set config-libxvid no
 @c @set config-libzmq no
 @c @set config-libzvbi no
 @set config-lzma yes
@@ -456,26 +456,26 @@
 @c @set config-hardcoded-tables no
 @set config-runtime-cpudetect yes
 @set config-safe-bitstream-reader yes
-@set config-shared yes
+@c @set config-shared no
 @c @set config-small no
 @set config-static yes
 @set config-swscale-alpha yes
 @c @set config-d3d11va no
 @c @set config-dxva2 no
-@set config-vaapi yes
+@c @set config-vaapi no
 @c @set config-vda no
-@set config-vdpau yes
+@c @set config-vdpau no
 @c @set config-xvmc no
-@set config-gpl yes
-@set config-nonfree yes
-@set config-version3 yes
+@c @set config-gpl no
+@c @set config-nonfree no
+@c @set config-version3 no
 @set config-avcodec yes
 @set config-avdevice yes
 @set config-avfilter yes
 @set config-avformat yes
 @c @set config-avresample no
 @set config-avutil yes
-@set config-postproc yes
+@c @set config-postproc no
 @set config-swresample yes
 @set config-swscale yes
 @set config-ffplay yes
@@ -522,7 +522,7 @@
 @c @set config-gcrypt no
 @c @set config-gmp no
 @set config-golomb yes
-@set config-gplv3 yes
+@c @set config-gplv3 no
 @set config-h263dsp yes
 @set config-h264chroma yes
 @set config-h264dsp yes
@@ -649,7 +649,7 @@
 @c @set config-h264-mmal-decoder no
 @c @set config-h264-qsv-decoder no
 @c @set config-h264-vda-decoder no
-@set config-h264-vdpau-decoder yes
+@c @set config-h264-vdpau-decoder no
 @set config-hevc-decoder yes
 @set config-hnm4-video-decoder yes
 @set config-hq-hqa-decoder yes
@@ -681,10 +681,10 @@
 @set config-mpeg2video-decoder yes
 @set config-mpeg4-decoder yes
 @c @set config-mpeg4-crystalhd-decoder no
-@set config-mpeg4-vdpau-decoder yes
+@c @set config-mpeg4-vdpau-decoder no
 @set config-mpegvideo-decoder yes
-@set config-mpeg-vdpau-decoder yes
-@set config-mpeg1-vdpau-decoder yes
+@c @set config-mpeg-vdpau-decoder no
+@c @set config-mpeg1-vdpau-decoder no
 @c @set config-mpeg2-crystalhd-decoder no
 @set config-msa1-decoder yes
 @c @set config-msmpeg4-crystalhd-decoder no
@@ -762,7 +762,7 @@
 @set config-vble-decoder yes
 @set config-vc1-decoder yes
 @c @set config-vc1-crystalhd-decoder no
-@set config-vc1-vdpau-decoder yes
+@c @set config-vc1-vdpau-decoder no
 @set config-vc1image-decoder yes
 @set config-vcr1-decoder yes
 @set config-vmdvideo-decoder yes
@@ -781,7 +781,7 @@
 @set config-wmv2-decoder yes
 @set config-wmv3-decoder yes
 @c @set config-wmv3-crystalhd-decoder no
-@set config-wmv3-vdpau-decoder yes
+@c @set config-wmv3-vdpau-decoder no
 @set config-wmv3image-decoder yes
 @set config-wnv1-decoder yes
 @set config-xan-wc3-decoder yes
@@ -972,15 +972,15 @@
 @c @set config-libgsm-decoder no
 @c @set config-libgsm-ms-decoder no
 @c @set config-libilbc-decoder no
-@set config-libopencore-amrnb-decoder yes
-@set config-libopencore-amrwb-decoder yes
+@c @set config-libopencore-amrnb-decoder no
+@c @set config-libopencore-amrwb-decoder no
 @c @set config-libopenjpeg-decoder no
 @c @set config-libopus-decoder no
 @c @set config-libschroedinger-decoder no
 @c @set config-libspeex-decoder no
 @c @set config-libstagefright-h264-decoder no
 @c @set config-libutvideo-decoder no
-@set config-libvorbis-decoder yes
+@c @set config-libvorbis-decoder no
 @c @set config-libvpx-vp8-decoder no
 @c @set config-libvpx-vp9-decoder no
 @c @set config-libzvbi-teletext-decoder no
@@ -1366,34 +1366,34 @@
 @set config-subrip-encoder yes
 @set config-webvtt-encoder yes
 @set config-xsub-encoder yes
-@set config-libfaac-encoder yes
+@c @set config-libfaac-encoder no
 @c @set config-libfdk-aac-encoder no
 @c @set config-libgsm-encoder no
 @c @set config-libgsm-ms-encoder no
 @c @set config-libilbc-encoder no
-@set config-libmp3lame-encoder yes
-@set config-libopencore-amrnb-encoder yes
+@c @set config-libmp3lame-encoder no
+@c @set config-libopencore-amrnb-encoder no
 @c @set config-libopenjpeg-encoder no
 @c @set config-libopus-encoder no
 @c @set config-libschroedinger-encoder no
 @c @set config-libshine-encoder no
 @c @set config-libspeex-encoder no
-@set config-libtheora-encoder yes
+@c @set config-libtheora-encoder no
 @c @set config-libtwolame-encoder no
 @c @set config-libutvideo-encoder no
 @c @set config-libvo-aacenc-encoder no
 @c @set config-libvo-amrwbenc-encoder no
-@set config-libvorbis-encoder yes
+@c @set config-libvorbis-encoder no
 @c @set config-libvpx-vp8-encoder no
 @c @set config-libvpx-vp9-encoder no
 @c @set config-libwavpack-encoder no
 @c @set config-libwebp-anim-encoder no
 @c @set config-libwebp-encoder no
-@set config-libx264-encoder yes
-@set config-libx264rgb-encoder yes
+@c @set config-libx264-encoder no
+@c @set config-libx264rgb-encoder no
 @c @set config-libx265-encoder no
 @c @set config-libxavs-encoder no
-@set config-libxvid-encoder yes
+@c @set config-libxvid-encoder no
 @c @set config-libaacplus-encoder no
 @c @set config-libopenh264-encoder no
 @c @set config-h264-qsv-encoder no
@@ -1439,7 +1439,7 @@
 @set config-compand-filter yes
 @set config-dcshift-filter yes
 @set config-earwax-filter yes
-@set config-ebur128-filter yes
+@c @set config-ebur128-filter no
 @set config-equalizer-filter yes
 @set config-flanger-filter yes
 @set config-highpass-filter yes
@@ -1464,23 +1464,23 @@
 @c @set config-ass-filter no
 @set config-bbox-filter yes
 @set config-blackdetect-filter yes
-@set config-blackframe-filter yes
+@c @set config-blackframe-filter no
 @set config-blend-filter yes
-@set config-boxblur-filter yes
+@c @set config-boxblur-filter no
 @set config-codecview-filter yes
 @set config-colorbalance-filter yes
 @set config-colorchannelmixer-filter yes
 @set config-colorlevels-filter yes
-@set config-colormatrix-filter yes
+@c @set config-colormatrix-filter no
 @set config-copy-filter yes
-@set config-cover-rect-filter yes
+@c @set config-cover-rect-filter no
 @set config-crop-filter yes
-@set config-cropdetect-filter yes
+@c @set config-cropdetect-filter no
 @set config-curves-filter yes
 @set config-dctdnoiz-filter yes
 @set config-decimate-filter yes
 @set config-dejudder-filter yes
-@set config-delogo-filter yes
+@c @set config-delogo-filter no
 @set config-deshake-filter yes
 @set config-detelecine-filter yes
 @set config-drawbox-filter yes
@@ -1488,65 +1488,65 @@
 @c @set config-drawtext-filter no
 @set config-edgedetect-filter yes
 @set config-elbg-filter yes
-@set config-eq-filter yes
+@c @set config-eq-filter no
 @set config-extractplanes-filter yes
 @set config-fade-filter yes
 @set config-fftfilt-filter yes
 @set config-field-filter yes
 @set config-fieldmatch-filter yes
 @set config-fieldorder-filter yes
-@set config-find-rect-filter yes
+@c @set config-find-rect-filter no
 @set config-format-filter yes
 @set config-fps-filter yes
 @set config-framepack-filter yes
 @set config-framestep-filter yes
 @c @set config-frei0r-filter no
-@set config-fspp-filter yes
-@set config-geq-filter yes
+@c @set config-fspp-filter no
+@c @set config-geq-filter no
 @set config-gradfun-filter yes
 @set config-haldclut-filter yes
 @set config-hflip-filter yes
-@set config-histeq-filter yes
+@c @set config-histeq-filter no
 @set config-histogram-filter yes
-@set config-hqdn3d-filter yes
+@c @set config-hqdn3d-filter no
 @set config-hqx-filter yes
 @set config-hue-filter yes
 @set config-idet-filter yes
 @set config-il-filter yes
-@set config-interlace-filter yes
+@c @set config-interlace-filter no
 @set config-interleave-filter yes
-@set config-kerndeint-filter yes
+@c @set config-kerndeint-filter no
 @set config-lenscorrection-filter yes
 @set config-lut3d-filter yes
 @set config-lut-filter yes
 @set config-lutrgb-filter yes
 @set config-lutyuv-filter yes
-@set config-mcdeint-filter yes
+@c @set config-mcdeint-filter no
 @set config-mergeplanes-filter yes
-@set config-mpdecimate-filter yes
+@c @set config-mpdecimate-filter no
 @set config-negate-filter yes
 @set config-noformat-filter yes
 @set config-noise-filter yes
 @set config-null-filter yes
 @c @set config-ocv-filter no
 @set config-overlay-filter yes
-@set config-owdenoise-filter yes
+@c @set config-owdenoise-filter no
 @set config-pad-filter yes
 @set config-palettegen-filter yes
 @set config-paletteuse-filter yes
 @set config-perms-filter yes
-@set config-perspective-filter yes
-@set config-phase-filter yes
+@c @set config-perspective-filter no
+@c @set config-phase-filter no
 @set config-pixdesctest-filter yes
-@set config-pp-filter yes
-@set config-pp7-filter yes
+@c @set config-pp-filter no
+@c @set config-pp7-filter no
 @set config-psnr-filter yes
-@set config-pullup-filter yes
+@c @set config-pullup-filter no
 @set config-qp-filter yes
 @set config-removelogo-filter yes
-@set config-repeatfields-filter yes
+@c @set config-repeatfields-filter no
 @set config-rotate-filter yes
-@set config-sab-filter yes
+@c @set config-sab-filter no
 @set config-scale-filter yes
 @set config-select-filter yes
 @set config-sendcmd-filter yes
@@ -1560,22 +1560,22 @@
 @set config-showpalette-filter yes
 @set config-shuffleplanes-filter yes
 @set config-signalstats-filter yes
-@set config-smartblur-filter yes
+@c @set config-smartblur-filter no
 @set config-split-filter yes
-@set config-spp-filter yes
-@set config-stereo3d-filter yes
+@c @set config-spp-filter no
+@c @set config-stereo3d-filter no
 @c @set config-subtitles-filter no
-@set config-super2xsai-filter yes
+@c @set config-super2xsai-filter no
 @set config-swapuv-filter yes
 @set config-tblend-filter yes
 @set config-telecine-filter yes
 @set config-thumbnail-filter yes
 @set config-tile-filter yes
-@set config-tinterlace-filter yes
+@c @set config-tinterlace-filter no
 @set config-transpose-filter yes
 @set config-trim-filter yes
 @set config-unsharp-filter yes
-@set config-uspp-filter yes
+@c @set config-uspp-filter no
 @set config-vflip-filter yes
 @c @set config-vidstabdetect-filter no
 @c @set config-vidstabtransform-filter no
@@ -1591,7 +1591,7 @@
 @set config-haldclutsrc-filter yes
 @set config-life-filter yes
 @set config-mandelbrot-filter yes
-@set config-mptestsrc-filter yes
+@c @set config-mptestsrc-filter no
 @set config-nullsrc-filter yes
 @set config-rgbtestsrc-filter yes
 @set config-smptebars-filter yes
@@ -1606,35 +1606,35 @@
 @set config-showwavespic-filter yes
 @set config-amovie-filter yes
 @set config-movie-filter yes
-@set config-h263-vaapi-hwaccel yes
-@set config-h263-vdpau-hwaccel yes
+@c @set config-h263-vaapi-hwaccel no
+@c @set config-h263-vdpau-hwaccel no
 @c @set config-h264-d3d11va-hwaccel no
 @c @set config-h264-dxva2-hwaccel no
 @c @set config-h264-mmal-hwaccel no
 @c @set config-h264-qsv-hwaccel no
-@set config-h264-vaapi-hwaccel yes
+@c @set config-h264-vaapi-hwaccel no
 @c @set config-h264-vda-hwaccel no
 @c @set config-h264-vda-old-hwaccel no
-@set config-h264-vdpau-hwaccel yes
+@c @set config-h264-vdpau-hwaccel no
 @c @set config-hevc-d3d11va-hwaccel no
 @c @set config-hevc-dxva2-hwaccel no
 @c @set config-mpeg1-xvmc-hwaccel no
-@set config-mpeg1-vdpau-hwaccel yes
+@c @set config-mpeg1-vdpau-hwaccel no
 @c @set config-mpeg2-xvmc-hwaccel no
 @c @set config-mpeg2-d3d11va-hwaccel no
 @c @set config-mpeg2-dxva2-hwaccel no
-@set config-mpeg2-vaapi-hwaccel yes
-@set config-mpeg2-vdpau-hwaccel yes
-@set config-mpeg4-vaapi-hwaccel yes
-@set config-mpeg4-vdpau-hwaccel yes
+@c @set config-mpeg2-vaapi-hwaccel no
+@c @set config-mpeg2-vdpau-hwaccel no
+@c @set config-mpeg4-vaapi-hwaccel no
+@c @set config-mpeg4-vdpau-hwaccel no
 @c @set config-vc1-d3d11va-hwaccel no
 @c @set config-vc1-dxva2-hwaccel no
-@set config-vc1-vaapi-hwaccel yes
-@set config-vc1-vdpau-hwaccel yes
+@c @set config-vc1-vaapi-hwaccel no
+@c @set config-vc1-vdpau-hwaccel no
 @c @set config-wmv3-d3d11va-hwaccel no
 @c @set config-wmv3-dxva2-hwaccel no
-@set config-wmv3-vaapi-hwaccel yes
-@set config-wmv3-vdpau-hwaccel yes
+@c @set config-wmv3-vaapi-hwaccel no
+@c @set config-wmv3-vdpau-hwaccel no
 @set config-alsa-indev yes
 @c @set config-avfoundation-indev no
 @c @set config-bktr-indev no
@@ -1644,7 +1644,7 @@
 @set config-fbdev-indev yes
 @c @set config-gdigrab-indev no
 @c @set config-iec61883-indev no
-@set config-jack-indev yes
+@c @set config-jack-indev no
 @set config-lavfi-indev yes
 @c @set config-openal-indev no
 @set config-oss-indev yes

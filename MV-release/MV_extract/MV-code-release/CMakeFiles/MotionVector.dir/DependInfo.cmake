@@ -4,13 +4,13 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/nfv/deepvideo/data/MV-release/MV_extract/MV-code-release/draw_flow.cpp" "/home/nfv/deepvideo/data/MV-release/MV_extract/MV-code-release/CMakeFiles/MotionVector.dir/draw_flow.cpp.o"
+  "/home/mallesh/deepvideo/code/MV-release/MV_extract/MV-code-release/draw_flow.cpp" "/home/mallesh/deepvideo/code/MV-release/MV_extract/MV-code-release/CMakeFiles/MotionVector.dir/draw_flow.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/include/opencv"
+  "/usr/local/include/opencv4"
   )
 
 # Targets to which this target links.

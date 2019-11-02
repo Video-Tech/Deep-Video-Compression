@@ -26,8 +26,8 @@
 # mode=4digits
 
 
-indir=/home/nfv/pytorch-vcii/data/train2_1
-outdir=/home/nfv/pytorch-vcii/data/train2_1_mv
+indir=/home/mallesh/deepvideo/data/new-data/train
+outdir=/home/mallesh/deepvideo/data/new-data/train_mv
 tmp_prefix=pexel_sub_$1_
 mode=4digits
 type=png
@@ -39,7 +39,7 @@ mkdir ${outdir}
 # tmp_prefix=ut_$1_
 # mode=4digits
 
-#echo $1
+echo $1
 
 for f in ${indir}/$1*.${type}
 do
@@ -122,8 +122,8 @@ do
 				# /home/cywu/MV-release/MV_extract/ffmpeg-2.7.2/doc/examples/extract_mvs tmp_${tmp_prefix}.mp4 >tmp_${tmp_prefix}.mvs0
 				# /home/nfv/pytorch-vcii/data/MV-release/MV_extract/MV-code-release
 				# /home/cywu/MV-release/MV_extract/MV-code-release/Release/mpegflow \
-				/home/nfv/pytorch-vcii/data/MV-release/MV_extract/ffmpeg-2.7.2/doc/examples/extract_mvs tmp_${tmp_prefix}.mp4 >tmp_${tmp_prefix}.mvs0
-				/home/nfv/pytorch-vcii/data/MV-release/MV_extract/MV-code-release/MotionVector \
+				/home/mallesh/ffmpeg-3.4.6/doc/examples/extract_mvs tmp_${tmp_prefix}.mp4 >tmp_${tmp_prefix}.mvs0
+				/home/mallesh/deepvideo/code/MV-release/MV_extract/MV-code-release/MotionVector \
 							tmp_${tmp_prefix}.mvs0 ${outdir}/${cur_frame_name}_before_flow_x ${outdir}/${cur_frame_name}_before_flow_y
 
 
@@ -132,8 +132,8 @@ do
 				yes | ffmpeg  -i "tmp_${tmp_prefix}%01d.${type}" -c:v libx264 -g 2 -bf 0 -b_strategy 0  -sc_threshold 0 tmp_${tmp_prefix}.mp4
 				# /home/cywu/MV-release/MV_extract/ffmpeg-2.7.2/doc/examples/extract_mvs tmp_${tmp_prefix}.mp4 >tmp_${tmp_prefix}.mvs0
 				# /home/cywu/MV-release/MV_extract/MV-code-release/Release/mpegflow \
-				/home/nfv/pytorch-vcii/data/MV-release/MV_extract/ffmpeg-2.7.2/doc/examples/extract_mvs tmp_${tmp_prefix}.mp4 >tmp_${tmp_prefix}.mvs0
-				/home/nfv/pytorch-vcii/data/MV-release/MV_extract/MV-code-release/MotionVector \
+				/home/mallesh/ffmpeg-3.4.6/doc/examples/extract_mvs tmp_${tmp_prefix}.mp4 >tmp_${tmp_prefix}.mvs0
+				/home/mallesh/deepvideo/code/MV-release/MV_extract/MV-code-release/MotionVector \
 							tmp_${tmp_prefix}.mvs0 ${outdir}/${cur_frame_name}_after_flow_x ${outdir}/${cur_frame_name}_after_flow_y
 
 

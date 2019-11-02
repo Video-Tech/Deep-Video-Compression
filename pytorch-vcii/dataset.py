@@ -69,8 +69,8 @@ def get_bmv(img, fns):
             read_bmv(before_y),
             read_bmv(after_x),
             read_bmv(after_y)]
-    mh = 288
-    mw = 352
+    mh = 360
+    mw = 640
     if bmvs[0] is None or bmvs[1] is None:
         if 'ultra_video_group' in before_x:
             # We need HW to be (16n1, 16n2).
