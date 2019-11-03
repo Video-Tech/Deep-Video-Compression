@@ -109,7 +109,7 @@ do
 					prev_frame=${indir}/${video_name}$(printf "%04d" ${prev_idx}).${type}
 					next_frame=${indir}/${video_name}$(printf "%04d" ${next_idx}).${type}
 				fi
-
+				
 				cp $prev_frame tmp_${tmp_prefix}1.${type}
 				cp $cur_frame tmp_${tmp_prefix}2.${type}
 				rm tmp_${tmp_prefix}3.${type}
@@ -129,6 +129,7 @@ do
 
 				echo 'reaching here2'
 				cp $next_frame tmp_${tmp_prefix}1.jpg
+				echo  '###################' ${tmp_prefix}1.jpg
 				yes | ffmpeg  -i "tmp_${tmp_prefix}%01d.${type}" -c:v libx264 -g 2 -bf 0 -b_strategy 0  -sc_threshold 0 tmp_${tmp_prefix}.mp4
 				# /home/cywu/MV-release/MV_extract/ffmpeg-2.7.2/doc/examples/extract_mvs tmp_${tmp_prefix}.mp4 >tmp_${tmp_prefix}.mvs0
 				# /home/cywu/MV-release/MV_extract/MV-code-release/Release/mpegflow \
