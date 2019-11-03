@@ -13,4 +13,6 @@ def saliency_map(image, is_image):
     
     return saliencyMap
 
-#sm = saliency_map('images/neymar.jpg', 1)
+#sm = saliency_map('../../../data/eval_new/silent_cif_0096.png', 1)
+#cv2.imshow("Output", sm)
+#cv2.waitKey(0)

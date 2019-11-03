@@ -13,6 +13,7 @@ import network
 from metric import msssim, psnr
 from unet import UNet
 from object_detection.yolo_opencv import detect_objects
+from saliency.static_saliency import saliency_map
 
 
 def get_models(args, v_compress, bits, encoder_fuse_level, decoder_fuse_level):
@@ -202,6 +203,14 @@ def forward_ctx(unet, ctx_frames):
 
     return unet_output1, unet_output2
 
+def get_saliency_map(frames):
+    sm = []
+    for frame in frames:
+        frame = frame.cpu().numpy()
+        frame = np.swapaxes(frame, 0, 2)
+        m = saliency_map(frame*255, 0)
+        sm.append(m)
+    return np.array(sm)
 
 def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
                   iterations, encoder_fuse_level, decoder_fuse_level):
@@ -250,7 +259,9 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
 
     codes = []
     prev_psnr = 0.0
-    for _ in range(iterations):
+    sm = get_saliency_map(frame1)
+    print(sm.shape, frame1.shape)
+    for itr in range(iterations):
 
         if args.v_compress and args.stack:
             encoder_input = torch.cat([frame1, res, frame2], dim=1)
@@ -272,6 +283,11 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
             dec_unet_output1, dec_unet_output2)
 
         res = res - output
+        if itr == 0:
+            res = res.transpose(1,3) # Att
+            res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
+            res = res.transpose(1,3) #Att
+
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)
 

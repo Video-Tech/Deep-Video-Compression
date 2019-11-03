@@ -9,9 +9,9 @@ modeldir=model
 #train="../../data/new-data/train"
 #train_mv="../../data/new-data/train_mv"
 train="../../data/new-data/train"
-eval="../../data/eval_new"
+eval="../../data/eval"
 train_mv="../../data/new-data/train_mv"
-eval_mv="../../data/eval_new_mv"
+eval_mv="../../data/eval"
 
 
 if [[ ${hier} == "0" ]]; then
@@ -53,7 +53,7 @@ python3 -u train.py \
   --v-compress --warp --stack --fuse-encoder \
   --bits ${bits} \
   --distance1 ${distance1} --distance2 ${distance2} \
-  --max-train-iters 10 \
+  --max-train-iters 2000 \
   --save-model-name "gaze_model" \
   --save-codes \
   --save-out-img
