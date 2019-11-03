@@ -27,7 +27,7 @@ parser.add_argument('--iterations', type=int, default=10,
                     help='# iterations of progressive encoding/decoding.')
 parser.add_argument('--bits', default=16, type=int, 
                     help='Bottle neck size.')
-parser.add_argument('--patch', default=96, type=int, 
+parser.add_argument('--patch', default=64, type=int, 
                     help='Patch size.')
 parser.add_argument('--shrink', type=int, default=2, 
                     help='Reducing # channels in U-net by this factor.')
@@ -84,7 +84,7 @@ parser.add_argument('--save-codes', action='store_true',
                     help='If true, write compressed codes during eval.')
 parser.add_argument('--save-out-img', action='store_true',
                     help='If true, save output images during eval.')
-parser.add_argument('--checkpoint-iters', type=int, default=10000,
+parser.add_argument('--checkpoint-iters', type=int, default=1000,
                     help='Model checkpoint period.')
 parser.add_argument('--eval-iters', type=int, default=4500,
                     help='Evaluation period.')

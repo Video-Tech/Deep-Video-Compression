@@ -260,7 +260,6 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
     codes = []
     prev_psnr = 0.0
     sm = get_saliency_map(frame1)
-    print(sm.shape, frame1.shape)
     for itr in range(iterations):
 
         if args.v_compress and args.stack:
