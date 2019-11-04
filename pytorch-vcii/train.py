@@ -67,7 +67,7 @@ if not os.path.exists(args.model_dir):
   os.makedirs(args.model_dir)
 
 ############### Checkpoints ###############
-def resume(index):
+def resume(model_name, index):
   names = ['encoder', 'binarizer', 'decoder', 'unet']
 
   for net_idx, net in enumerate(nets):
@@ -211,7 +211,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 20:
             print('Start evaluation...')
 
             set_eval(nets)

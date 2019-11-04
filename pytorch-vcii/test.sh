@@ -43,7 +43,7 @@ fi
 # (for the demo data it's okay.)
 
 
-python3 -u train.py \
+python3 -u test.py \
   --train ${train} \
   --eval ${eval} \
   --train-mv ${train_mv} \
@@ -53,7 +53,7 @@ python3 -u train.py \
   --v-compress --warp --stack --fuse-encoder \
   --bits ${bits} \
   --distance1 ${distance1} --distance2 ${distance2} \
-  --max-train-iters 20 \
+  --max-train-iters 10 \
   --save-model-name "gaze_model" \
   --save-codes \
   --save-out-img
