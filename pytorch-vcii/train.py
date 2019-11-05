@@ -94,12 +94,15 @@ def save(index):
 
 def get_saliency_map(frames):
     sm = []
+    sm2 = []
     for frame in frames:
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
         m = saliency_map(frame*255, 0)
-        sm.append(m)
-    return np.array(sm)
+        #m = torch.from_numpy(m).float()
+        sm.append([m])
+        sm2.append(m)
+    return np.array(sm), np.array(sm2)
 
 ############### Training ###############
 
@@ -153,11 +156,12 @@ while True:
 
         out_img = torch.zeros(1, 3, height, width).cuda() + 0.5
 
-        #sm = get_saliency_map(frame1) # Att
+        sm, sm2 = get_saliency_map(frame1) # Att
+        sm = torch.from_numpy(sm).float().cuda()
 
         for itr in range(args.iterations):
             if args.v_compress and args.stack:
-                encoder_input = torch.cat([frame1, res, frame2], dim=1)
+                encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
             else:
                 encoder_input = res
 
@@ -175,10 +179,10 @@ while True:
                 warped_unet_output1, warped_unet_output2)
 
             res = res - output
-            #if itr == 0:
-            #    res = res.transpose(1,3) # Att
-            #    res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
-            #    res = res.transpose(1,3) #Att
+            if itr == 0:
+                res = res.transpose(1,3) # Att
+                res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
+                res = res.transpose(1,3) #Att
             out_img = out_img + output.data
             losses.append(res.abs().mean())
 
@@ -211,7 +215,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 20:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 2000:
             print('Start evaluation...')
 
             set_eval(nets)

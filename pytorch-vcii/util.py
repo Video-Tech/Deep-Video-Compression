@@ -15,7 +15,6 @@ from unet import UNet
 from object_detection.yolo_opencv import detect_objects
 from saliency.static_saliency import saliency_map
 
-
 def get_models(args, v_compress, bits, encoder_fuse_level, decoder_fuse_level):
 
     encoder = network.EncoderCell(
@@ -205,12 +204,16 @@ def forward_ctx(unet, ctx_frames):
 
 def get_saliency_map(frames):
     sm = []
+    sm2 = []
     for frame in frames:
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
         m = saliency_map(frame*255, 0)
-        sm.append(m)
-    return np.array(sm)
+        m = np.swapaxes(m, 0, 1)
+        #m = torch.from_numpy(m).float()
+        sm.append([m])
+        sm2.append(m)
+    return np.array(sm), np.array(sm2)
 
 def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
                   iterations, encoder_fuse_level, decoder_fuse_level):
@@ -259,11 +262,11 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
 
     codes = []
     prev_psnr = 0.0
-    sm = get_saliency_map(frame1)
+    sm, sm2 = get_saliency_map(frame1)
+    sm = torch.from_numpy(sm).float().cuda()
     for itr in range(iterations):
-
         if args.v_compress and args.stack:
-            encoder_input = torch.cat([frame1, res, frame2], dim=1)
+            encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
         else:
             encoder_input = res
 
@@ -282,10 +285,10 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
             dec_unet_output1, dec_unet_output2)
 
         res = res - output
-        if itr == 0:
-            res = res.transpose(1,3) # Att
-            res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
-            res = res.transpose(1,3) #Att
+        #if itr == 0:
+        #    res = res.transpose(1,3) # Att
+        #    res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
+        #    res = res.transpose(1,3) #Att
 
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)
