@@ -110,6 +110,7 @@ get_names	extract_mv.py	/^def get_names(old_names, idx):$/;"	f
 get_output_layers	object_detection/yolo_opencv.py	/^def get_output_layers(net):$/;"	f
 get_psnr	util.py	/^def get_psnr(original, compared):$/;"	f
 get_saliency_map	train.py	/^def get_saliency_map(frames):$/;"	f
+get_saliency_map	util.py	/^def get_saliency_map(frames):$/;"	f
 gfiles	preparation/prepare_data.py	/^    gfiles = ["%04d" % (x+1) for x in range(97)]$/;"	v
 gpus	train.py	/^gpus = [int(gpu) for gpu in args.gpus.split(',')]$/;"	v
 gray	saliency/motion_saliency.py	/^	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)$/;"	v
@@ -188,9 +189,6 @@ prepare_unet_output	util.py	/^def prepare_unet_output(unet, unet_input, flows, w
 psnr	metric.py	/^def psnr(original, compared):$/;"	f
 read_bmv	dataset.py	/^def read_bmv(fn):$/;"	f
 rem	extract_mv.py	/^	rem = img_idx%13$/;"	v
-res	train.py	/^                res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att$/;"	v
-res	train.py	/^                res = res.transpose(1,3) # Att$/;"	v
-res	train.py	/^                res = res.transpose(1,3) #Att$/;"	v
 res	train.py	/^            res = res - output$/;"	v
 reset_parameters	modules/conv_rnn.py	/^    def reset_parameters(self):$/;"	m	class:ConvLSTMCell
 resume	train.py	/^def resume(index):$/;"	f
@@ -208,8 +206,6 @@ save_torch_array_as_image	util.py	/^def save_torch_array_as_image(filename, arr)
 scheduler	train.py	/^scheduler = LS.MultiStepLR(solver, milestones=milestones, gamma=args.gamma)$/;"	v
 set_eval	util.py	/^def set_eval(models):$/;"	f
 set_train	util.py	/^def set_train(models):$/;"	f
-sm	saliency/static_saliency.py	/^sm = saliency_map('images\/neymar.jpg', 1)$/;"	v
-sm	train.py	/^        sm = get_saliency_map(frame1) # Att$/;"	v
 solver	train.py	/^solver = optim.Adam($/;"	v
 train_iter	train.py	/^    train_iter = args.load_iter$/;"	v
 train_iter	train.py	/^train_iter = 0$/;"	v
