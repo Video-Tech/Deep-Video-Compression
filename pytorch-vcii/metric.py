@@ -12,7 +12,7 @@ import numpy as np
 from scipy import signal
 from scipy.ndimage.filters import convolve
 from PIL import Image
-from object_detection.yolo_opencv import detect_objects
+
 
 
 def _FSpecialGauss(size, sigma):
@@ -200,12 +200,13 @@ def msssim(original, compared):
 
     return MultiScaleSSIM(original, compared, max_val=255)
 
+
 def psnr(original, compared):
     if isinstance(original, str):
         original = np.array(Image.open(original).convert('RGB'))
     if isinstance(compared, str):
         compared = np.array(Image.open(compared).convert('RGB'))
-    
+
     original = original[:1072, :1920]
 
     mse = np.mean(np.square(original - compared))

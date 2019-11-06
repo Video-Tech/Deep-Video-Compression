@@ -13,7 +13,6 @@ from evaluate import run_eval
 from train_options import parser
 from util import get_models, init_lstm, set_train, set_eval
 from util import prepare_inputs, forward_ctx
-from saliency.static_saliency import saliency_map
 
 args = parser.parse_args()
 print(args)
@@ -34,6 +33,7 @@ def get_eval_loaders():
         args=args),
   }
   return eval_loaders
+
 
 
 ############### Model ###############
@@ -67,7 +67,7 @@ if not os.path.exists(args.model_dir):
   os.makedirs(args.model_dir)
 
 ############### Checkpoints ###############
-def resume(index):
+def resume(model, index):
   names = ['encoder', 'binarizer', 'decoder', 'unet']
 
   for net_idx, net in enumerate(nets):
@@ -92,15 +92,6 @@ def save(index):
                    names[net_idx], index))
 
 
-def get_saliency_map(frames):
-    sm = []
-    for frame in frames:
-        frame = frame.cpu().numpy()
-        frame = np.swapaxes(frame, 0, 2)
-        m = saliency_map(frame*255, 0)
-        sm.append(m)
-    return np.array(sm)
-
 ############### Training ###############
 
 train_iter = 0
@@ -121,7 +112,6 @@ while True:
         scheduler.step()
         train_iter += 1
 
-        #print(len(crops), crops[0].shape)
         if train_iter > args.max_train_iters:
           break
 
@@ -145,7 +135,6 @@ while True:
         res, frame1, frame2, warped_unet_output1, warped_unet_output2 = prepare_inputs(
             crops, args, unet_output1, unet_output2)
 
-        #print(res.shape, frame1.shape, frame2.shape)
         losses = []
 
         bp_t0 = time.time()
@@ -153,9 +142,7 @@ while True:
 
         out_img = torch.zeros(1, 3, height, width).cuda() + 0.5
 
-        #sm = get_saliency_map(frame1) # Att
-
-        for itr in range(args.iterations):
+        for _ in range(args.iterations):
             if args.v_compress and args.stack:
                 encoder_input = torch.cat([frame1, res, frame2], dim=1)
             else:
@@ -175,10 +162,6 @@ while True:
                 warped_unet_output1, warped_unet_output2)
 
             res = res - output
-            #if itr == 0:
-            #    res = res.transpose(1,3) # Att
-            #    res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
-            #    res = res.transpose(1,3) #Att
             out_img = out_img + output.data
             losses.append(res.abs().mean())
 
@@ -211,7 +194,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 2000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 20000:
             print('Start evaluation...')
 
             set_eval(nets)
@@ -219,7 +202,7 @@ while True:
             eval_loaders = get_eval_loaders()
             for eval_name, eval_loader in eval_loaders.items():
                 eval_begin = time.time()
-                eval_loss, mssim, psnr, att_msssim, att_psnr = run_eval(nets, eval_loader, args,
+                eval_loss, mssim, psnr = run_eval(nets, eval_loader, args,
                     output_suffix='iter%d' % train_iter)
 
                 print('Evaluation @iter %d done in %d secs' % (
@@ -228,12 +211,8 @@ while True:
                       + '\t'.join(['%.5f' % el for el in eval_loss.tolist()]))
                 print('%s MS-SSIM: ' % eval_name
                       + '\t'.join(['%.5f' % el for el in mssim.tolist()]))
-                #print('%s ATT MS-SSIM: ' % eval_name
-                #      + '\t'.join(['%.5f' % el for el in att_msssim.tolist()]))
                 print('%s PSNR   : ' % eval_name
                       + '\t'.join(['%.5f' % el for el in psnr.tolist()]))
-                #print('%s ATT PSNR   : ' % eval_name
-                #      + '\t'.join(['%.5f' % el for el in att_psnr.tolist()]))
 
             set_train(nets)
             just_resumed = False

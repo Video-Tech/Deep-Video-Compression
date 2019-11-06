@@ -7,7 +7,6 @@ import torch.utils.data as data
 import numpy as np
 import random
 import cv2
-from object_detection.yolo_opencv import detect_objects
 
 
 def get_loader(is_train, root, mv_dir, args):
@@ -69,16 +68,15 @@ def get_bmv(img, fns):
             read_bmv(before_y),
             read_bmv(after_x),
             read_bmv(after_y)]
-    mh = 360
-    mw = 640
+
     if bmvs[0] is None or bmvs[1] is None:
         if 'ultra_video_group' in before_x:
             # We need HW to be (16n1, 16n2).
             bmvs[0] = np.zeros((1072, 1920, 1))
             bmvs[1] = np.zeros((1072, 1920, 1))
         else:
-            bmvs[0] = np.zeros((mh, mw, 1))
-            bmvs[1] = np.zeros((mh, mw, 1))
+            bmvs[0] = np.zeros((288, 352, 1))
+            bmvs[1] = np.zeros((288, 352, 1))
     else:
         bmvs[0] = bmvs[0] * (-2.0)
         bmvs[1] = bmvs[1] * (-2.0)        
@@ -88,8 +86,8 @@ def get_bmv(img, fns):
             bmvs[2] = np.zeros((1072, 1920, 1))
             bmvs[3] = np.zeros((1072, 1920, 1))
         else:
-            bmvs[2] = np.zeros((mh, mw, 1))
-            bmvs[3] = np.zeros((mh, mw, 1))
+            bmvs[2] = np.zeros((288, 352, 1))
+            bmvs[3] = np.zeros((288, 352, 1))
     else:
         bmvs[2] = bmvs[2] * (-2.0)
         bmvs[3] = bmvs[3] * (-2.0)        
@@ -103,24 +101,6 @@ def crop_cv2(img, patch):
     start_y = random.randint(0, width - patch)
 
     return img[start_x : start_x + patch, start_y : start_y + patch]
-
-def att_crop_cv2(img, patch, filename):
-    height, width, c = img.shape
-    objects = detect_objects(filename, 1)
-    if len(objects) > 0:
-        start_x = objects[0][0] if objects[0][0] > 0 else 0
-        start_y = objects[0][1] if objects[0][1] > 0 else 0
-        if start_x > height-patch:
-            start_x = height-patch
-        if start_y > width-patch:
-            start_y = width-patch
-    else:
-        start_x = random.randint(0, height - patch)
-        start_y = random.randint(0, width - patch)
-    #print(start_x, start_y, start_x + patch, start_y + patch)
-
-    return img[start_x : start_x + patch, start_y : start_y + patch]
-
 
 
 def flip_cv2(img, patch):
@@ -202,7 +182,6 @@ class ImageFolder(data.Dataset):
         if is_train:
             random.shuffle(self.imgs)
 
-        self.is_attention = False
         print('\tdistance=%d/%d' % (args.distance1, args.distance2))
 
     def _load_image_list(self):
@@ -235,6 +214,7 @@ class ImageFolder(data.Dataset):
                     continue
                 if os.path.isfile(filename):
                     self.imgs.append(filename)
+
         print('%d images loaded.' % len(self.imgs))
 
     def get_group_data(self, filename):
@@ -256,16 +236,9 @@ class ImageFolder(data.Dataset):
         img = self.loader(filename)
         return img, filename
 
-    def attention_based_crops(self, img, filename):
-        crops = []
-        for i in range(self._num_crops):
-            crop = att_crop_cv2(img, self.patch, filename)
-            crop[..., :9] /= 255.0
-            crops.append(np_to_torch(crop))
-        return crops
-
     def __getitem__(self, index):
         filename = self.imgs[index]
+
         if self.v_compress:
             img, main_fn = self.get_group_data(filename)
         else:
@@ -317,15 +290,12 @@ class ImageFolder(data.Dataset):
 
         # CV2 cropping in CPU is faster.
         if self.is_train:
-            if self.is_attention:
-                data = self.attention_based_crops(img, filename)
-            else:
-                crops = []
-                for i in range(self._num_crops):
-                    crop = crop_cv2(img, self.patch)
-                    crop[..., :9] /= 255.0
-                    crops.append(np_to_torch(crop))
-                data = crops
+            crops = []
+            for i in range(self._num_crops):
+                crop = crop_cv2(img, self.patch)
+                crop[..., :9] /= 255.0
+                crops.append(np_to_torch(crop))
+            data = crops
         else:
             img[..., :9] /= 255.0
             data = np_to_torch(img)
@@ -333,7 +303,6 @@ class ImageFolder(data.Dataset):
         ctx_frames /= 255.0
         ctx_frames = np_to_torch(ctx_frames)
 
-        #print(data[0].shape, ctx_frames.shape)
         return data, ctx_frames, main_fn
 
     def __len__(self):
