@@ -15,7 +15,6 @@ from dataset import get_loader
 
 
 def save_codes(name, codes):
-  print(codes)
   codes = (codes.astype(np.int8) + 1) // 2
   export = np.packbits(codes.reshape(-1))
   np.savez_compressed(
