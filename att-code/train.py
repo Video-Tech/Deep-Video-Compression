@@ -98,7 +98,7 @@ def get_saliency_map(frames):
     for frame in frames:
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
-        m = saliency_map(frame*255, 0)
+        m = saliency_map(frame*255, 0, 0)
         #m = torch.from_numpy(m).float()
         sm.append([m])
         sm2.append(m)
@@ -215,7 +215,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 2000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10000:
             print('Start evaluation...')
 
             set_eval(nets)

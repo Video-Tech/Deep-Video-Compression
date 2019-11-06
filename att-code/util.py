@@ -208,7 +208,7 @@ def get_saliency_map(frames):
     for frame in frames:
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
-        m = saliency_map(frame*255, 0)
+        m = saliency_map(frame*255, 0, 1)
         m = np.swapaxes(m, 0, 1)
         #m = torch.from_numpy(m).float()
         sm.append([m])

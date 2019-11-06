@@ -38,7 +38,7 @@ for i in range(0, min(numDetections, args["max_detections"])):
 	color = np.random.randint(0, 255, size=(3,))
 	color = [int(c) for c in color]
 	cv2.rectangle(output, (startX, startY), (endX, endY), color, 2)
-
+	print((startX, startY), (endX, endY))
 	# show the output image
 	cv2.imshow("Image", output)
 	cv2.waitKey(0)

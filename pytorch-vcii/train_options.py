@@ -57,7 +57,7 @@ parser.add_argument('--schedule', default='50000,60000,70000,80000,90000', type=
                     help='Schedule milestones.')
 parser.add_argument('--gamma', type=float, default=0.5,
                     help='LR decay factor.')
-parser.add_argument('--batch-size', type=int, default=16, 
+parser.add_argument('--batch-size', type=int, default=4, 
                     help='Batch size.')
 parser.add_argument('--eval-batch-size', type=int, default=1,
                     help='Batch size for evaluation.')
@@ -84,7 +84,7 @@ parser.add_argument('--save-codes', action='store_true',
                     help='If true, write compressed codes during eval.')
 parser.add_argument('--save-out-img', action='store_true',
                     help='If true, save output images during eval.')
-parser.add_argument('--checkpoint-iters', type=int, default=10000,
+parser.add_argument('--checkpoint-iters', type=int, default=1000,
                     help='Model checkpoint period.')
 parser.add_argument('--eval-iters', type=int, default=4500,
                     help='Evaluation period.')

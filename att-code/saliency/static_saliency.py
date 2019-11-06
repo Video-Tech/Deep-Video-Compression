@@ -1,6 +1,6 @@
 import cv2
 
-def saliency_map(image, is_image):
+def saliency_map(image, is_image, is_eval):
     if is_image:
         image = cv2.imread(image)
     
@@ -11,8 +11,14 @@ def saliency_map(image, is_image):
     saliency = cv2.saliency.StaticSaliencyFineGrained_create()
     (success, saliencyMap) = saliency.computeSaliency(image)
     
+    if is_eval == 1:
+        saliencyMap[30:156, 120:214] = 5*saliencyMap[30:156, 120:214]
+
     return saliencyMap
 
-#sm = saliency_map('../../../data/eval_new/silent_cif_0096.png', 1)
+#sm = saliency_map('../../../data/eval/silent_cif_0012.png', 1)
+#
+#cv2.rectangle(sm, (120,30), (214,156), 3, 2)
+#
 #cv2.imshow("Output", sm)
 #cv2.waitKey(0)
