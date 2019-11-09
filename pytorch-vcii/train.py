@@ -86,7 +86,7 @@ def save(index):
 
   for net_idx, net in enumerate(nets):
     if net is not None:
-      torch.save(encoder.state_dict(), 
+      torch.save(net.state_dict(), 
                  '{}/{}_{}_{:08d}.pth'.format(
                    args.model_dir, args.save_model_name, 
                    names[net_idx], index))
@@ -194,7 +194,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 20000:
             print('Start evaluation...')
 
             set_eval(nets)
