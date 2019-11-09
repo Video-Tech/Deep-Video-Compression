@@ -74,7 +74,7 @@ def resume(model, index):
     if net is not None:
       name = names[net_idx]
       checkpoint_path = '{}/{}_{}_{:08d}.pth'.format(
-          args.model_dir, args.save_model_name, 
+          args.model_dir, args.load_model_name, 
           name, index)
 
       print('Loading %s from %s...' % (name, checkpoint_path))
@@ -194,7 +194,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 20000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10000:
             print('Start evaluation...')
 
             set_eval(nets)

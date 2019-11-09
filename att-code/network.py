@@ -18,7 +18,7 @@ class EncoderCell(nn.Module):
 
         # Layers.
         self.conv = nn.Conv2d(
-            10 if stack else 3, 
+            9 if stack else 3, 
             64, 
             kernel_size=3, stride=2, padding=1, bias=False)
 
@@ -101,11 +101,11 @@ class DecoderCell(nn.Module):
 
         # Layers.
         self.conv1 = nn.Conv2d(
-            bits, 512, kernel_size=1, stride=1, padding=0, bias=False)
+            bits, 128, kernel_size=1, stride=1, padding=0, bias=False)
 
         self.rnn1 = ConvLSTMCell(
-            512,
-            512,
+            128,
+            128,
             kernel_size=3,
             stride=1,
             padding=1,
@@ -114,8 +114,8 @@ class DecoderCell(nn.Module):
 
         self.rnn2 = ConvLSTMCell(
             (((128 + 256 // shrink * 2) if v_compress else 128) 
-             if self.fuse_level >= 3 else 128), #out1=256
-            512,
+             if self.fuse_level >= 3 else 32), #out1=256
+            128,
             kernel_size=3,
             stride=1,
             padding=1,
@@ -124,8 +124,8 @@ class DecoderCell(nn.Module):
 
         self.rnn3 = ConvLSTMCell(
             (((128 + 128//shrink*2) if v_compress else 128) 
-             if self.fuse_level >= 2 else 128), #out2=128
-            256,
+             if self.fuse_level >= 2 else 32), #out2=128
+            128,
             kernel_size=3,
             stride=1,
             padding=1,
@@ -133,7 +133,7 @@ class DecoderCell(nn.Module):
             bias=False)
 
         self.rnn4 = ConvLSTMCell(
-            (64 + 64//shrink*2) if v_compress else 64, #out3=64
+            (48 + 48//shrink*2) if v_compress else 32, #out3=64
             128,
             kernel_size=3,
             stride=1,

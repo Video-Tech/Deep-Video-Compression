@@ -25,10 +25,11 @@ def save_codes(name, codes):
 
 def save_output_images(name, ex_imgs):
   for i, img in enumerate(ex_imgs):
-    save_numpy_array_as_image(
-      '%s_iter%02d.png' % (name, i + 1), 
-      img
-    )
+    if i == 9 or i == 1:
+      save_numpy_array_as_image(
+        '%s_iter%02d.png' % (name, i + 1), 
+        img
+      )
 
 
 def finish_batch(args, filenames, original, out_imgs,

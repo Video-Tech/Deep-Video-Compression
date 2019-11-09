@@ -86,7 +86,7 @@ def save(index):
 
   for net_idx, net in enumerate(nets):
     if net is not None:
-      torch.save(encoder.state_dict(), 
+      torch.save(net.state_dict(), 
                  '{}/{}_{}_{:08d}.pth'.format(
                    args.model_dir, args.save_model_name, 
                    names[net_idx], index))
@@ -99,7 +99,6 @@ def get_saliency_map(frames):
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
         m = saliency_map(frame*255, 0, 0)
-        #m = torch.from_numpy(m).float()
         sm.append([m])
         sm2.append(m)
     return np.array(sm), np.array(sm2)
@@ -161,7 +160,8 @@ while True:
 
         for itr in range(args.iterations):
             if args.v_compress and args.stack:
-                encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
+                encoder_input = torch.cat([frame1, res, frame2], dim=1)
+                #encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
             else:
                 encoder_input = res
 
@@ -215,7 +215,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 20000:
             print('Start evaluation...')
 
             set_eval(nets)

@@ -78,7 +78,7 @@ parser.add_argument('--load-model-name', type=str,
                     help='Checkpoint name to load. (Do nothing if not specified.)')
 parser.add_argument('--load-iter', type=int,
                     help='Iteraction of checkpoint to load.')
-parser.add_argument('--save-model-name', type=str, default='demo',
+parser.add_argument('--save-model-name', type=str, default='model',
                     help='Checkpoint name to save.')
 parser.add_argument('--save-codes', action='store_true',
                     help='If true, write compressed codes during eval.')

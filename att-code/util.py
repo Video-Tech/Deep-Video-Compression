@@ -209,10 +209,9 @@ def get_saliency_map(frames):
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
         m = saliency_map(frame*255, 0, 1)
-        m = np.swapaxes(m, 0, 1)
-        #m = torch.from_numpy(m).float()
-        sm.append([m])
         sm2.append(m)
+        m = np.swapaxes(m, 0, 1)
+        sm.append([m])
     return np.array(sm), np.array(sm2)
 
 def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
@@ -266,7 +265,8 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
     sm = torch.from_numpy(sm).float().cuda()
     for itr in range(iterations):
         if args.v_compress and args.stack:
-            encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
+            encoder_input = torch.cat([frame1, res, frame2], dim=1)
+            #encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
         else:
             encoder_input = res
 
@@ -285,10 +285,10 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
             dec_unet_output1, dec_unet_output2)
 
         res = res - output
-        #if itr == 0:
-        #    res = res.transpose(1,3) # Att
-        #    res = res*(torch.from_numpy(sm).float().cuda()[:, :, :, None]) #Att
-        #    res = res.transpose(1,3) #Att
+        if itr == 0:
+            res = res.transpose(1,3) # Att
+            res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
+            res = res.transpose(1,3) #Att
 
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)
@@ -405,6 +405,50 @@ def warp_unet_outputs(flows, unet_output1, unet_output2):
     return warped_unet_output1, warped_unet_output2
 
 
+#def init_lstm(batch_size, height, width, args):
+#
+#    encoder_h_1 = (Variable(
+#        torch.zeros(batch_size, 256, height // 4, width // 4)),
+#                   Variable(
+#                       torch.zeros(batch_size, 256, height // 4, width // 4)))
+#    encoder_h_2 = (Variable(
+#        torch.zeros(batch_size, 512, height // 8, width // 8)),
+#                   Variable(
+#                       torch.zeros(batch_size, 512, height // 8, width // 8)))
+#    encoder_h_3 = (Variable(
+#        torch.zeros(batch_size, 512, height // 16, width // 16)),
+#                   Variable(
+#                       torch.zeros(batch_size, 512, height // 16, width // 16)))
+#
+#    decoder_h_1 = (Variable(
+#        torch.zeros(batch_size, 512, height // 16, width // 16)),
+#                   Variable(
+#                       torch.zeros(batch_size, 512, height // 16, width // 16)))
+#    decoder_h_2 = (Variable(
+#        torch.zeros(batch_size, 512, height // 8, width // 8)),
+#                   Variable(
+#                       torch.zeros(batch_size, 512, height // 8, width // 8)))
+#    decoder_h_3 = (Variable(
+#        torch.zeros(batch_size, 256, height // 4, width // 4)),
+#                   Variable(
+#                       torch.zeros(batch_size, 256, height // 4, width // 4)))
+#    decoder_h_4 = (Variable(
+#        torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)),
+#                   Variable(
+#                       torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)))
+#
+#    encoder_h_1 = (encoder_h_1[0].cuda(), encoder_h_1[1].cuda())
+#    encoder_h_2 = (encoder_h_2[0].cuda(), encoder_h_2[1].cuda())
+#    encoder_h_3 = (encoder_h_3[0].cuda(), encoder_h_3[1].cuda())
+#
+#    decoder_h_1 = (decoder_h_1[0].cuda(), decoder_h_1[1].cuda())
+#    decoder_h_2 = (decoder_h_2[0].cuda(), decoder_h_2[1].cuda())
+#    decoder_h_3 = (decoder_h_3[0].cuda(), decoder_h_3[1].cuda())
+#    decoder_h_4 = (decoder_h_4[0].cuda(), decoder_h_4[1].cuda())
+#
+#    return (encoder_h_1, encoder_h_2, encoder_h_3, 
+#            decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4)
+
 def init_lstm(batch_size, height, width, args):
 
     encoder_h_1 = (Variable(
@@ -421,17 +465,17 @@ def init_lstm(batch_size, height, width, args):
                        torch.zeros(batch_size, 512, height // 16, width // 16)))
 
     decoder_h_1 = (Variable(
-        torch.zeros(batch_size, 512, height // 16, width // 16)),
+        torch.zeros(batch_size, 128, height // 16, width // 16)),
                    Variable(
-                       torch.zeros(batch_size, 512, height // 16, width // 16)))
+                       torch.zeros(batch_size, 128, height // 16, width // 16)))
     decoder_h_2 = (Variable(
-        torch.zeros(batch_size, 512, height // 8, width // 8)),
+        torch.zeros(batch_size, 128, height // 8, width // 8)),
                    Variable(
-                       torch.zeros(batch_size, 512, height // 8, width // 8)))
+                       torch.zeros(batch_size, 128, height // 8, width // 8)))
     decoder_h_3 = (Variable(
-        torch.zeros(batch_size, 256, height // 4, width // 4)),
+        torch.zeros(batch_size, 128, height // 4, width // 4)),
                    Variable(
-                       torch.zeros(batch_size, 256, height // 4, width // 4)))
+                       torch.zeros(batch_size, 128, height // 4, width // 4)))
     decoder_h_4 = (Variable(
         torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)),
                    Variable(
