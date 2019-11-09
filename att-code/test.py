@@ -18,6 +18,13 @@ from saliency.static_saliency import saliency_map
 args = parser.parse_args()
 print(args)
 
+############### Data ###############
+train_loader = get_loader(
+  is_train=True,
+  root=args.train, mv_dir=args.train_mv, 
+  args=args
+)
+
 def get_eval_loaders():
   # We can extend this dict to evaluate on multiple datasets.
   eval_loaders = {
@@ -28,6 +35,7 @@ def get_eval_loaders():
   }
   return eval_loaders
 
+
 ############### Model ###############
 encoder, binarizer, decoder, unet = get_models(
   args=args, v_compress=args.v_compress, 
@@ -35,9 +43,31 @@ encoder, binarizer, decoder, unet = get_models(
   encoder_fuse_level=args.encoder_fuse_level,
   decoder_fuse_level=args.decoder_fuse_level)
 
-nets = [encoder, binarizer, decoder, unet]
+nets = [encoder, binarizer, decoder]
+if unet is not None:
+  nets.append(unet)
 
-def load_model(index):
+gpus = [int(gpu) for gpu in args.gpus.split(',')]
+if len(gpus) > 1:
+  print("Using GPUs {}.".format(gpus))
+  for net in nets:
+    net = nn.DataParallel(net, device_ids=gpus)
+
+params = [{'params': net.parameters()} for net in nets]
+
+solver = optim.Adam(
+    params,
+    lr=args.lr)
+
+milestones = [int(s) for s in args.schedule.split(',')]
+scheduler = LS.MultiStepLR(solver, milestones=milestones, gamma=args.gamma)
+
+if not os.path.exists(args.model_dir):
+  print("Creating directory %s." % args.model_dir)
+  os.makedirs(args.model_dir)
+
+############### Checkpoints ###############
+def resume(model_name, index):
   names = ['encoder', 'binarizer', 'decoder', 'unet']
 
   for net_idx, net in enumerate(nets):
@@ -50,7 +80,42 @@ def load_model(index):
       print('Loading %s from %s...' % (name, checkpoint_path))
       net.load_state_dict(torch.load(checkpoint_path))
 
-load_model('gaze_model', 9000)
+
+def save(index):
+  names = ['encoder', 'binarizer', 'decoder', 'unet']
+
+  for net_idx, net in enumerate(nets):
+    if net is not None:
+      torch.save(net.state_dict(), 
+                 '{}/{}_{}_{:08d}.pth'.format(
+                   args.model_dir, args.save_model_name, 
+                   names[net_idx], index))
+
+
+def get_saliency_map(frames):
+    sm = []
+    sm2 = []
+    for frame in frames:
+        frame = frame.cpu().numpy()
+        frame = np.swapaxes(frame, 0, 2)
+        m = saliency_map(frame*255, 0, 0)
+        sm.append([m])
+        sm2.append(m)
+    return np.array(sm), np.array(sm2)
+
+############### Training ###############
+
+train_iter = 0
+just_resumed = False
+if args.load_model_name:
+    print('Loading %s@iter %d' % (args.load_model_name,
+                                  args.load_iter))
+
+    resume(args.load_model_name, args.load_iter)
+    train_iter = args.load_iter
+    scheduler.last_epoch = train_iter - 1
+    just_resumed = True
+
 
 set_eval(nets)
 
@@ -73,3 +138,4 @@ for eval_name, eval_loader in eval_loaders.items():
     #print('%s ATT PSNR   : ' % eval_name
     #      + '\t'.join(['%.5f' % el for el in att_psnr.tolist()]))
 
+set_train(nets)

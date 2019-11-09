@@ -123,7 +123,6 @@ while True:
         scheduler.step()
         train_iter += 1
 
-        #print(len(crops), crops[0].shape)
         if train_iter > args.max_train_iters:
           break
 
