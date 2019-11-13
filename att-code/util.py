@@ -265,8 +265,8 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
     sm = torch.from_numpy(sm).float().cuda()
     for itr in range(iterations):
         if args.v_compress and args.stack:
-            encoder_input = torch.cat([frame1, res, frame2], dim=1)
-            #encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
+            #encoder_input = torch.cat([frame1, res, frame2], dim=1)
+            encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
         else:
             encoder_input = res
 
@@ -285,10 +285,10 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
             dec_unet_output1, dec_unet_output2)
 
         res = res - output
-        if itr == 0:
-            res = res.transpose(1,3) # Att
-            res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
-            res = res.transpose(1,3) #Att
+        #if itr == 0:
+        #res = res.transpose(1,3) # Att
+        #res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
+        #res = res.transpose(1,3) #Att
 
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)

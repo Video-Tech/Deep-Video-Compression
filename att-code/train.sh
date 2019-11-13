@@ -26,7 +26,7 @@ elif [[ ${hier} == "1" ]]; then
 elif [[ ${hier} == "2" ]]; then
   distance1=1
   distance2=2
-  bits=4
+  bits=2
   encoder_fuse_level=1
   decoder_fuse_level=1
 else
@@ -52,7 +52,5 @@ python3 -u train.py \
   --distance1 ${distance1} --distance2 ${distance2} \
   --max-train-iters 20000 \
   --save-model-name "gaze_model" \
-  --load-model-name "gaze_model" \
-  --load-iter 20000 \
   --save-codes \
   --save-out-img

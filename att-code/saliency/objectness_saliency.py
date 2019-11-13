@@ -42,3 +42,11 @@ for i in range(0, min(numDetections, args["max_detections"])):
 	# show the output image
 	cv2.imshow("Image", output)
 	cv2.waitKey(0)
+	
+output = image.copy()
+color = np.random.randint(0, 255, size=(3,))
+color = [int(c) for c in color]
+cv2.rectangle(output, (80, 200), (130, 260), color, 2)
+# show the output image
+cv2.imshow("Image", output)
+cv2.waitKey(0)

@@ -159,8 +159,8 @@ while True:
 
         for itr in range(args.iterations):
             if args.v_compress and args.stack:
-                encoder_input = torch.cat([frame1, res, frame2], dim=1)
-                #encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
+                #encoder_input = torch.cat([frame1, res, frame2], dim=1)
+                encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
             else:
                 encoder_input = res
 
@@ -178,11 +178,13 @@ while True:
                 warped_unet_output1, warped_unet_output2)
 
             res = res - output
+            #print('before', res.abs().mean())
             if itr == 0:
                 res = res.transpose(1,3) # Att
                 res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
                 res = res.transpose(1,3) #Att
             out_img = out_img + output.data
+            #print('after', res.abs().mean())
             losses.append(res.abs().mean())
 
         bp_t1 = time.time()

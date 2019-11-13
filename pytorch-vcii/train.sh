@@ -26,7 +26,7 @@ elif [[ ${hier} == "1" ]]; then
 elif [[ ${hier} == "2" ]]; then
   distance1=1
   distance2=2
-  bits=4
+  bits=2
   encoder_fuse_level=1
   decoder_fuse_level=1
 else
