@@ -205,6 +205,9 @@ def forward_ctx(unet, ctx_frames):
 def get_saliency_map(frames):
     sm = []
     sm2 = []
+    smx = []
+    smy = []
+    smz = []
     for frame in frames:
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
@@ -212,7 +215,17 @@ def get_saliency_map(frames):
         sm2.append(m)
         m = np.swapaxes(m, 0, 1)
         sm.append([m])
-    return np.array(sm), np.array(sm2)
+        m1 = cv2.resize(m, (176, 144), interpolation=cv2.INTER_CUBIC)
+        m2 = cv2.resize(m, (88, 72), interpolation=cv2.INTER_CUBIC)
+        m3 = cv2.resize(m, (44, 36), interpolation=cv2.INTER_CUBIC)
+        smx.append([m1])
+        smy.append([m2])
+        smz.append([m3])
+    smx = np.array(smx)
+    smy = np.array(smy)
+    smz = np.array(smz)
+    tsm = [smx, smy, smz]
+    return np.array(sm), np.array(sm2), tsm
 
 def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
                   iterations, encoder_fuse_level, decoder_fuse_level):
@@ -261,19 +274,19 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
 
     codes = []
     prev_psnr = 0.0
-    sm, sm2 = get_saliency_map(frame1)
+    sm, sm2, tsm = get_saliency_map(frame1)
     sm = torch.from_numpy(sm).float().cuda()
     for itr in range(iterations):
         if args.v_compress and args.stack:
-            #encoder_input = torch.cat([frame1, res, frame2], dim=1)
-            encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
+            encoder_input = torch.cat([frame1, res, frame2], dim=1)
+            #encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
         else:
             encoder_input = res
 
         # Encode.
         encoded, encoder_h_1, encoder_h_2, encoder_h_3 = encoder(
             encoder_input, encoder_h_1, encoder_h_2, encoder_h_3,
-            enc_unet_output1, enc_unet_output2)
+            enc_unet_output1, enc_unet_output2, tsm)
 
         # Binarize.
         code = binarizer(encoded)
@@ -285,10 +298,10 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
             dec_unet_output1, dec_unet_output2)
 
         res = res - output
-        #if itr == 0:
-        #res = res.transpose(1,3) # Att
-        #res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
-        #res = res.transpose(1,3) #Att
+        if itr == 0:
+            res = res.transpose(1,3) # Att
+            res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
+            res = res.transpose(1,3) #Att
 
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)
@@ -452,17 +465,17 @@ def warp_unet_outputs(flows, unet_output1, unet_output2):
 def init_lstm(batch_size, height, width, args):
 
     encoder_h_1 = (Variable(
-        torch.zeros(batch_size, 256, height // 4, width // 4)),
+        torch.zeros(batch_size, 128, height // 4, width // 4)),
                    Variable(
-                       torch.zeros(batch_size, 256, height // 4, width // 4)))
+                       torch.zeros(batch_size, 128, height // 4, width // 4)))
     encoder_h_2 = (Variable(
-        torch.zeros(batch_size, 512, height // 8, width // 8)),
+        torch.zeros(batch_size, 64, height // 8, width // 8)),
                    Variable(
-                       torch.zeros(batch_size, 512, height // 8, width // 8)))
+                       torch.zeros(batch_size, 64, height // 8, width // 8)))
     encoder_h_3 = (Variable(
-        torch.zeros(batch_size, 512, height // 16, width // 16)),
+        torch.zeros(batch_size, 4, height // 16, width // 16)),
                    Variable(
-                       torch.zeros(batch_size, 512, height // 16, width // 16)))
+                       torch.zeros(batch_size, 4, height // 16, width // 16)))
 
     decoder_h_1 = (Variable(
         torch.zeros(batch_size, 128, height // 16, width // 16)),
@@ -473,13 +486,13 @@ def init_lstm(batch_size, height, width, args):
                    Variable(
                        torch.zeros(batch_size, 128, height // 8, width // 8)))
     decoder_h_3 = (Variable(
-        torch.zeros(batch_size, 128, height // 4, width // 4)),
+        torch.zeros(batch_size, 64, height // 4, width // 4)),
                    Variable(
-                       torch.zeros(batch_size, 128, height // 4, width // 4)))
+                       torch.zeros(batch_size, 64, height // 4, width // 4)))
     decoder_h_4 = (Variable(
-        torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)),
+        torch.zeros(batch_size, 256 if False else 32, height // 2, width // 2)),
                    Variable(
-                       torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)))
+                       torch.zeros(batch_size, 256 if False else 32, height // 2, width // 2)))
 
     encoder_h_1 = (encoder_h_1[0].cuda(), encoder_h_1[1].cuda())
     encoder_h_2 = (encoder_h_2[0].cuda(), encoder_h_2[1].cuda())

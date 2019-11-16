@@ -2,6 +2,7 @@ import numpy as np
 import os
 import time
 
+import cv2
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -95,13 +96,26 @@ def save(index):
 def get_saliency_map(frames):
     sm = []
     sm2 = []
+    smx = []
+    smy = []
+    smz = []
     for frame in frames:
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
         m = saliency_map(frame*255, 0, 0)
         sm.append([m])
         sm2.append(m)
-    return np.array(sm), np.array(sm2)
+        m1 = cv2.resize(m, (32, 32), interpolation=cv2.INTER_CUBIC)
+        m2 = cv2.resize(m, (16, 16), interpolation=cv2.INTER_CUBIC)
+        m3 = cv2.resize(m, (8, 8), interpolation=cv2.INTER_CUBIC)
+        smx.append([m1])
+        smy.append([m2])
+        smz.append([m3])
+    smx = np.array(smx)
+    smy = np.array(smy)
+    smz = np.array(smz)
+    tsm = [smx, smy, smz]
+    return np.array(sm), np.array(sm2), tsm
 
 ############### Training ###############
 
@@ -154,23 +168,24 @@ while True:
 
         out_img = torch.zeros(1, 3, height, width).cuda() + 0.5
 
-        sm, sm2 = get_saliency_map(frame1) # Att
+        sm, sm2, a_sm = get_saliency_map(frame1) # Att
         sm = torch.from_numpy(sm).float().cuda()
 
         for itr in range(args.iterations):
             if args.v_compress and args.stack:
-                #encoder_input = torch.cat([frame1, res, frame2], dim=1)
-                encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
+                encoder_input = torch.cat([frame1, res, frame2], dim=1)
+                #encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
             else:
                 encoder_input = res
 
             # Encode.
             encoded, encoder_h_1, encoder_h_2, encoder_h_3 = encoder(
                 encoder_input, encoder_h_1, encoder_h_2, encoder_h_3,
-                warped_unet_output1, warped_unet_output2)
+                warped_unet_output1, warped_unet_output2, a_sm)
 
             # Binarize.
             codes = binarizer(encoded)
+            #print(codes.shape)
 
             # Decode.
             (output, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4) = decoder(
