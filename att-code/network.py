@@ -24,7 +24,7 @@ class EncoderCell(nn.Module):
             kernel_size=3, stride=2, padding=1, bias=False)
 
         self.rnn1 = ConvLSTMCell(
-            129 if fuse_encoder and v_compress else 64,
+            192 if fuse_encoder and v_compress else 64,
             128,
             kernel_size=3,
             stride=2,
@@ -35,8 +35,8 @@ class EncoderCell(nn.Module):
         self.rnn2 = ConvLSTMCell(
             #((384 if fuse_encoder and v_compress else 256) 
             #if self.fuse_level >= 2 else 256),
-            129,
-            64,
+            128,
+            128,
             kernel_size=3,
             stride=2,
             padding=1,
@@ -46,8 +46,8 @@ class EncoderCell(nn.Module):
         self.rnn3 = ConvLSTMCell(
             #((768 if fuse_encoder and v_compress else 512) 
             # if self.fuse_level >= 3 else 512),
-            65,
-            4,
+            128,
+            256,
             kernel_size=3,
             stride=2,
             padding=1,
@@ -59,28 +59,27 @@ class EncoderCell(nn.Module):
                 unet_output1, unet_output2, sm):
 
         x = self.conv(input)
-        sm0 = torch.from_numpy(sm[0]).float().cuda()
-        x = torch.cat([x, sm0], dim=1)
+        #sm0 = torch.from_numpy(sm[0]).float().cuda()
+        #x = torch.cat([x, sm0], dim=1)
         # Fuse
-        #if self.v_compress and self.fuse_encoder:
-        #    x = torch.cat([x, unet_output1[2], unet_output2[2]], dim=1)
+        if self.v_compress and self.fuse_encoder:
+            x = torch.cat([x, unet_output1[2], unet_output2[2]], dim=1)
 
         hidden1 = self.rnn1(x, hidden1)
-        #print(x.shape, unet_output1[1].shape, sm[1].shape)
         x = hidden1[0]
-        sm1 = torch.from_numpy(sm[1]).float().cuda()
-        x = torch.cat([x, sm1], dim=1)
+        #sm1 = torch.from_numpy(sm[1]).float().cuda()
+        #x = torch.cat([x, sm1], dim=1)
         # Fuse.
-        #if self.v_compress and self.fuse_encoder and self.fuse_level >= 2:
-        #    x = torch.cat([x, unet_output1[1], unet_output2[1]], dim=1)
+        if self.v_compress and self.fuse_encoder and self.fuse_level >= 2:
+            x = torch.cat([x, unet_output1[1], unet_output2[1]], dim=1)
 
         hidden2 = self.rnn2(x, hidden2)
         x = hidden2[0]
-        sm2 = torch.from_numpy(sm[2]).float().cuda()
-        x = torch.cat([x, sm2], dim=1)
+        #sm2 = torch.from_numpy(sm[2]).float().cuda()
+        #x = torch.cat([x, sm2], dim=1)
         # Fuse.
-        #if self.v_compress and self.fuse_encoder and self.fuse_level >= 3:
-        #    x = torch.cat([x, unet_output1[0], unet_output2[0]], dim=1)
+        if self.v_compress and self.fuse_encoder and self.fuse_level >= 3:
+            x = torch.cat([x, unet_output1[0], unet_output2[0]], dim=1)
 
         hidden3 = self.rnn3(x, hidden3)
         x = hidden3[0]
@@ -90,7 +89,7 @@ class EncoderCell(nn.Module):
 class Binarizer(nn.Module):
     def __init__(self, bits):
         super(Binarizer, self).__init__()
-        self.conv = nn.Conv2d(4, bits, kernel_size=1, bias=False)
+        self.conv = nn.Conv2d(256, bits, kernel_size=1, bias=False)
         self.sign = Sign()
 
     def forward(self, input):

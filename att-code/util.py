@@ -298,10 +298,10 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
             dec_unet_output1, dec_unet_output2)
 
         res = res - output
-        if itr == 0:
-            res = res.transpose(1,3) # Att
-            res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
-            res = res.transpose(1,3) #Att
+        #if itr == 0:
+        #    res = res.transpose(1,3) # Att
+        #    res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
+        #    res = res.transpose(1,3) #Att
 
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)
@@ -469,13 +469,13 @@ def init_lstm(batch_size, height, width, args):
                    Variable(
                        torch.zeros(batch_size, 128, height // 4, width // 4)))
     encoder_h_2 = (Variable(
-        torch.zeros(batch_size, 64, height // 8, width // 8)),
+        torch.zeros(batch_size, 128, height // 8, width // 8)),
                    Variable(
-                       torch.zeros(batch_size, 64, height // 8, width // 8)))
+                       torch.zeros(batch_size, 128, height // 8, width // 8)))
     encoder_h_3 = (Variable(
-        torch.zeros(batch_size, 4, height // 16, width // 16)),
+        torch.zeros(batch_size, 256, height // 16, width // 16)),
                    Variable(
-                       torch.zeros(batch_size, 4, height // 16, width // 16)))
+                       torch.zeros(batch_size, 256, height // 16, width // 16)))
 
     decoder_h_1 = (Variable(
         torch.zeros(batch_size, 128, height // 16, width // 16)),
