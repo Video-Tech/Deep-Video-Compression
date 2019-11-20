@@ -12,10 +12,7 @@ import torch.nn as nn
 import network
 from metric import msssim, psnr
 from unet import UNet
-from object_detection.yolo_opencv import detect_objects
-from saliency.static_saliency import saliency_map
 
-import datetime
 
 def get_models(args, v_compress, bits, encoder_fuse_level, decoder_fuse_level):
 
@@ -204,30 +201,6 @@ def forward_ctx(unet, ctx_frames):
 
     return unet_output1, unet_output2
 
-def get_saliency_map(frames):
-    sm = []
-    sm2 = []
-    smx = []
-    smy = []
-    smz = []
-    for frame in frames:
-        frame = frame.cpu().numpy()
-        frame = np.swapaxes(frame, 0, 2)
-        m = saliency_map(frame*255, 0, 1)
-        sm2.append(m)
-        m = np.swapaxes(m, 0, 1)
-        sm.append([m])
-        m1 = cv2.resize(m, (176, 144), interpolation=cv2.INTER_CUBIC)
-        m2 = cv2.resize(m, (88, 72), interpolation=cv2.INTER_CUBIC)
-        m3 = cv2.resize(m, (44, 36), interpolation=cv2.INTER_CUBIC)
-        smx.append([m1])
-        smy.append([m2])
-        smz.append([m3])
-    smx = np.array(smx)
-    smy = np.array(smy)
-    smz = np.array(smz)
-    tsm = [smx, smy, smz]
-    return np.array(sm), np.array(sm2), tsm
 
 def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
                   iterations, encoder_fuse_level, decoder_fuse_level):
@@ -276,40 +249,28 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
 
     codes = []
     prev_psnr = 0.0
-    sm, sm2, tsm = get_saliency_map(frame1)
-    sm = torch.from_numpy(sm).float().cuda()
-    for itr in range(iterations):
+    for _ in range(iterations):
+
         if args.v_compress and args.stack:
             encoder_input = torch.cat([frame1, res, frame2], dim=1)
-            #encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
         else:
             encoder_input = res
 
         # Encode.
         encoded, encoder_h_1, encoder_h_2, encoder_h_3 = encoder(
             encoder_input, encoder_h_1, encoder_h_2, encoder_h_3,
-            enc_unet_output1, enc_unet_output2, tsm)
+            enc_unet_output1, enc_unet_output2)
 
         # Binarize.
         code = binarizer(encoded)
         if args.save_codes:
             codes.append(code.data.cpu().numpy())
 
-        a = datetime.datetime.now()
-
         output, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4 = decoder(
             code, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4,
             dec_unet_output1, dec_unet_output2)
 
-        b = datetime.datetime.now()
-        c = b-a
-        print(c.microseconds/1000)
         res = res - output
-        #if itr == 0:
-        #    res = res.transpose(1,3) # Att
-        #    res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
-        #    res = res.transpose(1,3) #Att
-
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)
 
@@ -337,12 +298,8 @@ def evaluate(original, out_imgs):
 
     ms_ssims = np.array([get_ms_ssim(original, out_img) for out_img in out_imgs])
     psnrs    = np.array([   get_psnr(original, out_img) for out_img in out_imgs])
-    #att_ms_ssims = np.array([get_att_ms_ssim(original, out_img) for out_img in out_imgs])
-    #att_psnrs    = np.array([   get_att_psnr(original, out_img) for out_img in out_imgs])
-    att_ms_ssims = 0
-    att_psnrs = 0
 
-    return ms_ssims, psnrs, att_ms_ssims, att_psnrs
+    return ms_ssims, psnrs
 
 
 def evaluate_all(original, out_imgs):
@@ -365,40 +322,12 @@ def as_img_array(image):
     return image.astype(np.uint8).transpose(0, 2, 3, 1)
 
 
-def get_croped_image(img, objects):
-    patch = 64 # assuming patch size is 64 from the vcii
-    height, width, c = img.shape
-    if len(objects) > 0:
-        start_x = objects[0][0] if objects[0][0] > 0 else 0
-        start_y = objects[0][1] if objects[0][1] > 0 else 0
-        if start_x > height-patch:
-            start_x = height-patch
-        if start_y > width-patch:
-            start_y = width-patch
-
-    return img[start_x : start_x + patch, start_y : start_y + patch]
-
-def get_att_ms_ssim(original, compared):
-    original, compared = as_img_array(original), as_img_array(compared)
-    objects = detect_objects(original[0], 0) # second argument 0 is for array, 1 is for image file name
-    orig_c = get_croped_image(original[0], objects)
-    comp_c = get_croped_image(compared[0], objects)
-    return msssim(orig_c, comp_c)
-
-def get_att_psnr(original, compared):
-    original, compared = as_img_array(original), as_img_array(compared)
-    objects = detect_objects(original[0], 0) # second argument 0 is for array, 1 is for image file name
-    orig_c = get_croped_image(original[0], objects)
-    comp_c = get_croped_image(compared[0], objects)
-    return psnr(orig_c, comp_c)
-
 def get_ms_ssim(original, compared):
-    original, compared = as_img_array(original), as_img_array(compared)
-    return msssim(original, compared)
+    return msssim(as_img_array(original), as_img_array(compared))
+
 
 def get_psnr(original, compared):
-    original, compared = as_img_array(original), as_img_array(compared)
-    return psnr(original, compared)
+    return psnr(as_img_array(original), as_img_array(compared))
 
 
 def warp_unet_outputs(flows, unet_output1, unet_output2):
@@ -425,50 +354,6 @@ def warp_unet_outputs(flows, unet_output1, unet_output2):
     return warped_unet_output1, warped_unet_output2
 
 
-#def init_lstm(batch_size, height, width, args):
-#
-#    encoder_h_1 = (Variable(
-#        torch.zeros(batch_size, 256, height // 4, width // 4)),
-#                   Variable(
-#                       torch.zeros(batch_size, 256, height // 4, width // 4)))
-#    encoder_h_2 = (Variable(
-#        torch.zeros(batch_size, 512, height // 8, width // 8)),
-#                   Variable(
-#                       torch.zeros(batch_size, 512, height // 8, width // 8)))
-#    encoder_h_3 = (Variable(
-#        torch.zeros(batch_size, 512, height // 16, width // 16)),
-#                   Variable(
-#                       torch.zeros(batch_size, 512, height // 16, width // 16)))
-#
-#    decoder_h_1 = (Variable(
-#        torch.zeros(batch_size, 512, height // 16, width // 16)),
-#                   Variable(
-#                       torch.zeros(batch_size, 512, height // 16, width // 16)))
-#    decoder_h_2 = (Variable(
-#        torch.zeros(batch_size, 512, height // 8, width // 8)),
-#                   Variable(
-#                       torch.zeros(batch_size, 512, height // 8, width // 8)))
-#    decoder_h_3 = (Variable(
-#        torch.zeros(batch_size, 256, height // 4, width // 4)),
-#                   Variable(
-#                       torch.zeros(batch_size, 256, height // 4, width // 4)))
-#    decoder_h_4 = (Variable(
-#        torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)),
-#                   Variable(
-#                       torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)))
-#
-#    encoder_h_1 = (encoder_h_1[0].cuda(), encoder_h_1[1].cuda())
-#    encoder_h_2 = (encoder_h_2[0].cuda(), encoder_h_2[1].cuda())
-#    encoder_h_3 = (encoder_h_3[0].cuda(), encoder_h_3[1].cuda())
-#
-#    decoder_h_1 = (decoder_h_1[0].cuda(), decoder_h_1[1].cuda())
-#    decoder_h_2 = (decoder_h_2[0].cuda(), decoder_h_2[1].cuda())
-#    decoder_h_3 = (decoder_h_3[0].cuda(), decoder_h_3[1].cuda())
-#    decoder_h_4 = (decoder_h_4[0].cuda(), decoder_h_4[1].cuda())
-#
-#    return (encoder_h_1, encoder_h_2, encoder_h_3, 
-#            decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4)
-
 def init_lstm(batch_size, height, width, args):
 
     encoder_h_1 = (Variable(
@@ -493,13 +378,13 @@ def init_lstm(batch_size, height, width, args):
                    Variable(
                        torch.zeros(batch_size, 128, height // 8, width // 8)))
     decoder_h_3 = (Variable(
-        torch.zeros(batch_size, 64, height // 4, width // 4)),
+        torch.zeros(batch_size, 128, height // 4, width // 4)),
                    Variable(
-                       torch.zeros(batch_size, 64, height // 4, width // 4)))
+                       torch.zeros(batch_size, 128, height // 4, width // 4)))
     decoder_h_4 = (Variable(
-        torch.zeros(batch_size, 256 if False else 32, height // 2, width // 2)),
+        torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)),
                    Variable(
-                       torch.zeros(batch_size, 256 if False else 32, height // 2, width // 2)))
+                       torch.zeros(batch_size, 256 if False else 128, height // 2, width // 2)))
 
     encoder_h_1 = (encoder_h_1[0].cuda(), encoder_h_1[1].cuda())
     encoder_h_2 = (encoder_h_2[0].cuda(), encoder_h_2[1].cuda())

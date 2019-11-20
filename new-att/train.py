@@ -37,6 +37,7 @@ def get_eval_loaders():
   return eval_loaders
 
 
+
 ############### Model ###############
 encoder, binarizer, decoder, unet = get_models(
   args=args, v_compress=args.v_compress, 
@@ -68,14 +69,14 @@ if not os.path.exists(args.model_dir):
   os.makedirs(args.model_dir)
 
 ############### Checkpoints ###############
-def resume(model_name, index):
+def resume(model, index):
   names = ['encoder', 'binarizer', 'decoder', 'unet']
 
   for net_idx, net in enumerate(nets):
     if net is not None:
       name = names[net_idx]
       checkpoint_path = '{}/{}_{}_{:08d}.pth'.format(
-          args.model_dir, args.save_model_name, 
+          args.model_dir, args.load_model_name, 
           name, index)
 
       print('Loading %s from %s...' % (name, checkpoint_path))
@@ -92,30 +93,17 @@ def save(index):
                    args.model_dir, args.save_model_name, 
                    names[net_idx], index))
 
-
 def get_saliency_map(frames):
     sm = []
     sm2 = []
-    smx = []
-    smy = []
-    smz = []
     for frame in frames:
         frame = frame.cpu().numpy()
         frame = np.swapaxes(frame, 0, 2)
         m = saliency_map(frame*255, 0, 0)
         sm.append([m])
         sm2.append(m)
-        m1 = cv2.resize(m, (32, 32), interpolation=cv2.INTER_CUBIC)
-        m2 = cv2.resize(m, (16, 16), interpolation=cv2.INTER_CUBIC)
-        m3 = cv2.resize(m, (8, 8), interpolation=cv2.INTER_CUBIC)
-        smx.append([m1])
-        smy.append([m2])
-        smz.append([m3])
-    smx = np.array(smx)
-    smy = np.array(smy)
-    smz = np.array(smz)
-    tsm = [smx, smy, smz]
-    return np.array(sm), np.array(sm2), tsm
+    return np.array(sm), np.array(sm2)
+
 
 ############### Training ###############
 
@@ -160,33 +148,28 @@ while True:
         res, frame1, frame2, warped_unet_output1, warped_unet_output2 = prepare_inputs(
             crops, args, unet_output1, unet_output2)
 
-        #print(res.shape, frame1.shape, frame2.shape)
         losses = []
 
         bp_t0 = time.time()
         _, _, height, width = res.size()
 
         out_img = torch.zeros(1, 3, height, width).cuda() + 0.5
-
-        #sm, sm2, a_sm = get_saliency_map(frame1) # Att
-        #sm = torch.from_numpy(sm).float().cuda()
-        a_sm = []
+        sm, sm2 = get_saliency_map(frame1) # Att
+        sm = torch.from_numpy(sm).float().cuda()
 
         for itr in range(args.iterations):
             if args.v_compress and args.stack:
                 encoder_input = torch.cat([frame1, res, frame2], dim=1)
-                #encoder_input = torch.cat([frame1, res, sm, frame2], dim=1)
             else:
                 encoder_input = res
 
             # Encode.
             encoded, encoder_h_1, encoder_h_2, encoder_h_3 = encoder(
                 encoder_input, encoder_h_1, encoder_h_2, encoder_h_3,
-                warped_unet_output1, warped_unet_output2, a_sm)
+                warped_unet_output1, warped_unet_output2)
 
             # Binarize.
             codes = binarizer(encoded)
-            #print(codes.shape)
 
             # Decode.
             (output, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4) = decoder(
@@ -194,13 +177,11 @@ while True:
                 warped_unet_output1, warped_unet_output2)
 
             res = res - output
-            #print('before', res.abs().mean())
-            #if itr == 0:
-            #    res = res.transpose(1,3) # Att
-            #    res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
-            #    res = res.transpose(1,3) #Att
+            if itr == 0:
+                res = res.transpose(1,3) # Att
+                res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
+                res = res.transpose(1,3) #Att
             out_img = out_img + output.data
-            #print('after', res.abs().mean())
             losses.append(res.abs().mean())
 
         bp_t1 = time.time()
@@ -232,7 +213,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 20000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 10:
             print('Start evaluation...')
 
             set_eval(nets)
@@ -240,7 +221,7 @@ while True:
             eval_loaders = get_eval_loaders()
             for eval_name, eval_loader in eval_loaders.items():
                 eval_begin = time.time()
-                eval_loss, mssim, psnr, att_msssim, att_psnr = run_eval(nets, eval_loader, args,
+                eval_loss, mssim, psnr = run_eval(nets, eval_loader, args,
                     output_suffix='iter%d' % train_iter)
 
                 print('Evaluation @iter %d done in %d secs' % (
@@ -249,12 +230,8 @@ while True:
                       + '\t'.join(['%.5f' % el for el in eval_loss.tolist()]))
                 print('%s MS-SSIM: ' % eval_name
                       + '\t'.join(['%.5f' % el for el in mssim.tolist()]))
-                #print('%s ATT MS-SSIM: ' % eval_name
-                #      + '\t'.join(['%.5f' % el for el in att_msssim.tolist()]))
                 print('%s PSNR   : ' % eval_name
                       + '\t'.join(['%.5f' % el for el in psnr.tolist()]))
-                #print('%s ATT PSNR   : ' % eval_name
-                #      + '\t'.join(['%.5f' % el for el in att_psnr.tolist()]))
 
             set_train(nets)
             just_resumed = False
