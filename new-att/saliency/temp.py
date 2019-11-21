@@ -13,8 +13,9 @@ def saliency_map(image, is_image, is_eval):
     
     #if is_eval >= 0:
     #    #aliencyMap[200:260, 80:130] = 5*saliencyMap[200:260, 80:130]
-    saliencyMap[30:156, 120:214] = 100*saliencyMap[30:156, 120:214]
-    #    #saliencyMap[:, :] = 5*saliencyMap[:, :]
+    temp = 100*saliencyMap[30:156, 120:214]
+    saliencyMap[:, :] = 0*saliencyMap[:, :]
+    saliencyMap[30:156, 120:214] = temp
 
     return saliencyMap
 

@@ -14,14 +14,13 @@ def saliency_map(image, is_image, is_eval):
     #if is_eval >= 0:
     #    #aliencyMap[200:260, 80:130] = 5*saliencyMap[200:260, 80:130]
     #saliencyMap[30:156, 120:214] = 100*saliencyMap[30:156, 120:214]
-    saliencyMap[30:226, 30:226] = 2*saliencyMap[30:226, 30:226]
-    #saliencyMap[:, :] = 100*saliencyMap[:, :]
+    #saliencyMap[50:206, 50:206] = 2*saliencyMap[50:206, 50:206]
 
-    return saliencyMap/255.0
+    return saliencyMap
 
-#sm = saliency_map('../../../data/eval/silent_cif_0012.png', 1, 1)
+sm = saliency_map('../../../data/eval2/video_700_0093.png', 1, 1)
 
 ##cv2.rectangle(sm, (120,30), (214,156), 3, 2)
 #
-#cv2.imshow("Output", sm)
-#cv2.waitKey(0)
+cv2.imshow("Output", sm)
+cv2.waitKey(0)

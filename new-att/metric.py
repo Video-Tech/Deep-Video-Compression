@@ -193,9 +193,9 @@ def msssim(original, compared):
     if isinstance(compared, str):
         compared = np.array(Image.open(compared).convert('RGB'))
 
-    #original = original[:1072, :1920]
-    original = original[30:226, 30:226]
-    compared = compared[30:226, 30:226]
+    original = original[:1072, :1920]
+    #original = original[30:226, 30:226]
+    #compared = compared[30:226, 30:226]
 
     original = original[None, ...] if original.ndim == 3 else original
     compared = compared[None, ...] if compared.ndim == 3 else compared
