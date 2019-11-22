@@ -357,17 +357,17 @@ def warp_unet_outputs(flows, unet_output1, unet_output2):
 def init_lstm(batch_size, height, width, args):
 
     encoder_h_1 = (Variable(
-        torch.zeros(batch_size, 256, height // 4, width // 4)),
+        torch.zeros(batch_size, 128, height // 4, width // 4)),
                    Variable(
-                       torch.zeros(batch_size, 256, height // 4, width // 4)))
+                       torch.zeros(batch_size, 128, height // 4, width // 4)))
     encoder_h_2 = (Variable(
-        torch.zeros(batch_size, 512, height // 8, width // 8)),
+        torch.zeros(batch_size, 128, height // 8, width // 8)),
                    Variable(
-                       torch.zeros(batch_size, 512, height // 8, width // 8)))
+                       torch.zeros(batch_size, 128, height // 8, width // 8)))
     encoder_h_3 = (Variable(
-        torch.zeros(batch_size, 512, height // 16, width // 16)),
+        torch.zeros(batch_size, 128, height // 16, width // 16)),
                    Variable(
-                       torch.zeros(batch_size, 512, height // 16, width // 16)))
+                       torch.zeros(batch_size, 128, height // 16, width // 16)))
 
     decoder_h_1 = (Variable(
         torch.zeros(batch_size, 128, height // 16, width // 16)),

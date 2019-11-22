@@ -105,6 +105,20 @@ def get_saliency_map(frames):
     return np.array(sm), np.array(sm2)
 
 
+def get_gaze_map(fnames):
+    gm = []
+    gm2 = []
+    for f in fnames:
+        #print(f, '../../data/gaze/maps/video_gaze_map'+f[22:])
+        img = cv2.imread('../../data/gaze/maps/video_gaze_map'+f[22:], 0)
+        width, height = img.shape
+        if width % 16 != 0 or height % 16 != 0:
+            img = img[:(width//16)*16, :(height//16)*16]
+        gm2.append([img/25.5])
+        img = np.swapaxes(img, 0, 1)
+        gm.append(img/25.5)
+    return np.array(gm), np.array(gm2)
+
 ############### Training ###############
 
 train_iter = 0
@@ -121,7 +135,7 @@ if args.load_model_name:
 
 while True:
 
-    for batch, (crops, ctx_frames, _) in enumerate(train_loader):
+    for batch, (crops, ctx_frames, fnames) in enumerate(train_loader):
         scheduler.step()
         train_iter += 1
 
@@ -154,12 +168,15 @@ while True:
         _, _, height, width = res.size()
 
         out_img = torch.zeros(1, 3, height, width).cuda() + 0.5
-        sm, sm2 = get_saliency_map(frame1) # Att
-        sm = torch.from_numpy(sm).float().cuda()
+        #sm, sm2 = get_saliency_map(frame1) # Att
+        #sm = torch.from_numpy(sm).float().cuda()
+
+        gm, gm2 = get_gaze_map(fnames)
 
         for itr in range(args.iterations):
             if args.v_compress and args.stack:
-                encoder_input = torch.cat([frame1, res, frame2], dim=1)
+                #print(frame1.shape, gm2.shape)
+                encoder_input = torch.cat([frame1, res, torch.from_numpy(gm2).float().cuda(), frame2], dim=1)
             else:
                 encoder_input = res
 
@@ -179,7 +196,7 @@ while True:
             res = res - output
             if itr == 0:
                 res = res.transpose(1,3) # Att
-                res = res*(torch.from_numpy(sm2).float().cuda()[:, :, :, None]) #Att
+                res = res*(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
                 res = res.transpose(1,3) #Att
             out_img = out_img + output.data
             losses.append(res.abs().mean())
@@ -213,7 +230,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 30000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 100000:
             print('Start evaluation...')
 
             set_eval(nets)

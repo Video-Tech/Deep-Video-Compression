@@ -97,8 +97,8 @@ def get_bmv(img, fns):
 
 def crop_cv2(img, patch):
     height, width, c = img.shape
-    start_x = random.randint(0, height - patch)
-    start_y = random.randint(0, width - patch)
+    start_x = 0#random.randint(0, height - patch)
+    start_y = 0#random.randint(0, width - patch)
 
     return img[start_x : start_x + patch, start_y : start_y + patch]
 
@@ -271,9 +271,9 @@ class ImageFolder(data.Dataset):
         img = np.concatenate([img, bmv], axis=2)
 
         assert img.shape[2] == 13
-        if self.is_train:
+        #if self.is_train:
             # If use_bmv, * -1.0 on bmv for flipped images.
-            img = flip_cv2(img, self.patch)
+        #    img = flip_cv2(img, self.patch)
 
         if self.identity_grid is None:
             self.identity_grid = get_identity_grid(img.shape[:2])
@@ -288,15 +288,17 @@ class ImageFolder(data.Dataset):
         assert ctx_frames.shape[2] == 6
 
 
-        # CV2 cropping in CPU is faster.
+        ## CV2 cropping in CPU is faster.
         if self.is_train:
             crops = []
             for i in range(self._num_crops):
-                crop = crop_cv2(img, self.patch)
+                #crop = crop_cv2(img, self.patch)
+                crop = img
                 crop[..., :9] /= 255.0
                 crops.append(np_to_torch(crop))
             data = crops
         else:
+            #img = crop_cv2(img, self.patch)
             img[..., :9] /= 255.0
             data = np_to_torch(img)
 

@@ -24,7 +24,7 @@ class EncoderCell(nn.Module):
 
         self.rnn1 = ConvLSTMCell(
             128 if fuse_encoder and v_compress else 64,
-            256,
+            128,
             kernel_size=3,
             stride=2,
             padding=1,
@@ -32,9 +32,10 @@ class EncoderCell(nn.Module):
             bias=False)
 
         self.rnn2 = ConvLSTMCell(
-            ((384 if fuse_encoder and v_compress else 256) 
-             if self.fuse_level >= 2 else 256),
-            512,
+            #((384 if fuse_encoder and v_compress else 256) 
+            # if self.fuse_level >= 2 else 256),
+            128,
+            128,
             kernel_size=3,
             stride=2,
             padding=1,
@@ -42,9 +43,10 @@ class EncoderCell(nn.Module):
             bias=False)
 
         self.rnn3 = ConvLSTMCell(
-            ((768 if fuse_encoder and v_compress else 512) 
-             if self.fuse_level >= 3 else 512),
-            512,
+            #((768 if fuse_encoder and v_compress else 512) 
+            # if self.fuse_level >= 3 else 512),
+            128,
+            128,
             kernel_size=3,
             stride=2,
             padding=1,
@@ -80,7 +82,7 @@ class EncoderCell(nn.Module):
 class Binarizer(nn.Module):
     def __init__(self, bits):
         super(Binarizer, self).__init__()
-        self.conv = nn.Conv2d(512, bits, kernel_size=1, bias=False)
+        self.conv = nn.Conv2d(128, bits, kernel_size=1, bias=False)
         self.sign = Sign()
 
     def forward(self, input):

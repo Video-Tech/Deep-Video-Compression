@@ -6,10 +6,10 @@ hier=$1
 
 modeldir=model
 
-train="../../data/new-data/train"
-eval="../../data/eval2"
-train_mv="../../data/new-data/train_mv"
-eval_mv="../../data/eval2_mv"
+train="../../data/train"
+eval="../../data/eval1"
+train_mv="../../data/train_mv"
+eval_mv="../../data/eval1_mv"
 
 if [[ ${hier} == "0" ]]; then
   distance1=6

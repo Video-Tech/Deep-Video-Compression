@@ -268,12 +268,13 @@ class ImageFolder(data.Dataset):
             bmv[:, :, 2] = bmv[:, :, 2] / height
             bmv[:, :, 3] = bmv[:, :, 3] / width
 
+
         img = np.concatenate([img, bmv], axis=2)
 
         assert img.shape[2] == 13
-        if self.is_train:
+        #if self.is_train:
             # If use_bmv, * -1.0 on bmv for flipped images.
-            img = flip_cv2(img, self.patch)
+        #    img = flip_cv2(img, self.patch)
 
         if self.identity_grid is None:
             self.identity_grid = get_identity_grid(img.shape[:2])
@@ -292,12 +293,13 @@ class ImageFolder(data.Dataset):
         if self.is_train:
             crops = []
             for i in range(self._num_crops):
-                crop = crop_cv2(img, self.patch)
+                #crop = crop_cv2(img, self.patch)
+                crop = img
                 crop[..., :9] /= 255.0
                 crops.append(np_to_torch(crop))
             data = crops
         else:
-            img = crop_cv2(img, self.patch)
+            #img = crop_cv2(img, self.patch)
             img[..., :9] /= 255.0
             data = np_to_torch(img)
 

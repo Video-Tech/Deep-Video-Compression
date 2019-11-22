@@ -27,7 +27,7 @@ parser.add_argument('--iterations', type=int, default=10,
                     help='# iterations of progressive encoding/decoding.')
 parser.add_argument('--bits', default=2, type=int, 
                     help='Bottle neck size.')
-parser.add_argument('--patch', default=64, type=int, 
+parser.add_argument('--patch', default=256, type=int, 
                     help='Patch size.')
 parser.add_argument('--shrink', type=int, default=2, 
                     help='Reducing # channels in U-net by this factor.')
@@ -57,14 +57,14 @@ parser.add_argument('--schedule', default='50000,60000,70000,80000,90000', type=
                     help='Schedule milestones.')
 parser.add_argument('--gamma', type=float, default=0.5,
                     help='LR decay factor.')
-parser.add_argument('--batch-size', type=int, default=4, 
+parser.add_argument('--batch-size', type=int, default=1, 
                     help='Batch size.')
 parser.add_argument('--eval-batch-size', type=int, default=1,
                     help='Batch size for evaluation.')
 
 # To save computation, we compute objective for multiple
 # crops for each forward pass.
-parser.add_argument('--num-crops', type=int, default=2,
+parser.add_argument('--num-crops', type=int, default=1,
                     help='# training crops per example.')
 parser.add_argument('--gpus', default='0', type=str,
                     help='GPU indices separated by comma, e.g. \"0,1\".')
@@ -86,5 +86,5 @@ parser.add_argument('--save-out-img', action='store_true',
                     help='If true, save output images during eval.')
 parser.add_argument('--checkpoint-iters', type=int, default=1000,
                     help='Model checkpoint period.')
-parser.add_argument('--eval-iters', type=int, default=4500,
+parser.add_argument('--eval-iters', type=int, default=2000,
                     help='Evaluation period.')

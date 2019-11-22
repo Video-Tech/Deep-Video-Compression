@@ -7,9 +7,9 @@ hier=$1
 modeldir=model
 
 train="../../data/train"
-eval="../../data/eval2"
+eval="../../data/eval1"
 train_mv="../../data/train_mv"
-eval_mv="../../data/eval2_mv"
+eval_mv="../../data/eval1_mv"
 
 if [[ ${hier} == "0" ]]; then
   distance1=6
@@ -50,9 +50,9 @@ python3 -u train.py \
   --v-compress --warp --stack --fuse-encoder \
   --bits ${bits} \
   --distance1 ${distance1} --distance2 ${distance2} \
-  --max-train-iters 30000 \
+  --max-train-iters 100000 \
   --save-model-name "gaze_model" \
   --load-model-name "gaze_model" \
-  --load-iter 6000 \
+  --load-iter 10000 \
   --save-codes \
   --save-out-img

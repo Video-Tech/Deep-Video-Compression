@@ -124,13 +124,13 @@ def set_train(models):
             m.train()
 
 
-def eval_forward(model, batch, args):
+def eval_forward(model, batch, args, filenames):
     batch, ctx_frames = batch
     cooked_batch = prepare_batch(
         batch, args.v_compress, args.warp)
 
 
-    return forward_model(
+    return forward_model(filenames,
         model=model,
         cooked_batch=cooked_batch,
         ctx_frames=ctx_frames,
@@ -201,8 +201,21 @@ def forward_ctx(unet, ctx_frames):
 
     return unet_output1, unet_output2
 
+def get_gaze_map(fnames):
+    gm = []
+    gm2 = []
+    for f in fnames:
+        #print(f, '../../data/gaze/maps/video_gaze_map'+f[22:])
+        img = cv2.imread('../../data/gaze/maps/video_gaze_map'+f[22:], 0)
+        width, height = img.shape
+        if width % 16 != 0 or height % 16 != 0:
+            img = img[:(width//16)*16, :(height//16)*16]
+        gm2.append([img/25.5])
+        img = np.swapaxes(img, 0, 1)
+        gm.append(img/25.5)
+    return np.array(gm), np.array(gm2)
 
-def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
+def forward_model(fnames, model, cooked_batch, ctx_frames, args, v_compress,
                   iterations, encoder_fuse_level, decoder_fuse_level):
     encoder, binarizer, decoder, unet = model
     res, _, _, flows = cooked_batch
@@ -249,10 +262,11 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
 
     codes = []
     prev_psnr = 0.0
+    gm, gm2 = get_gaze_map(fnames)
     for _ in range(iterations):
 
         if args.v_compress and args.stack:
-            encoder_input = torch.cat([frame1, res, frame2], dim=1)
+            encoder_input = torch.cat([frame1, res, torch.from_numpy(gm2).float().cuda(), frame2], dim=1)
         else:
             encoder_input = res
 
