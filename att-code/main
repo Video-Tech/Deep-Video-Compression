@@ -1,3 +1,0 @@
-import os
-
-os.system("bash /home/nfv/pytorch-vcii/train.sh 2")
