@@ -62,10 +62,10 @@ int main(int argc, char** argv){
 	// string imgFile = "tmp.png";
 	int bound = 127;
 
-    int video_width = 640;
-    int video_height = 360;
-    //int video_width = 1920;
-    //int video_height = 1080;
+    //int video_width = 640;
+    //int video_height = 360;
+    int video_width = 256;
+    int video_height = 256;
     // int video_width = 352;
     //int video_width = 480;
     //int video_height = 288;

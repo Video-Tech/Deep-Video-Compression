@@ -26,8 +26,8 @@
 # mode=4digits
 
 
-indir=/home/mallesh/deepvideo/data/new-data/train
-outdir=/home/mallesh/deepvideo/data/new-data/train_mv
+indir=/home/mallesh/deepvideo/data/eval2
+outdir=/home/mallesh/deepvideo/data/eval2_mv
 tmp_prefix=pexel_sub_$1_
 mode=4digits
 type=png
