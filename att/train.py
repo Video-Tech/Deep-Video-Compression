@@ -114,7 +114,7 @@ def get_gaze_map(fnames):
         width, height = img.shape
         if width % 16 != 0 or height % 16 != 0:
             img = img[:(width//16)*16, :(height//16)*16]
-        img = img/255.0
+        img = 1+img/255.0
         #img[img==0] = 0.01
         gm2.append([img])
         img = np.swapaxes(img, 0, 1)
@@ -177,8 +177,8 @@ while True:
 
         for itr in range(args.iterations):
             if args.v_compress and args.stack:
-                #encoder_input = torch.cat([frame1, res, frame2], dim=1)
-                encoder_input = torch.cat([frame1, res, torch.from_numpy(gm2).float().cuda(), frame2], dim=1)
+                encoder_input = torch.cat([frame1, res, frame2], dim=1)
+                #encoder_input = torch.cat([frame1, res, torch.from_numpy(gm2).float().cuda(), frame2], dim=1)
             else:
                 encoder_input = res
 
@@ -198,8 +198,8 @@ while True:
             res = res - output
             if itr == 0:
                 res = res.transpose(1,3) # Att
-                #res = res*(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
-                res = res+(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
+                res = res*(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
+                #res = res+(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
                 res = res.transpose(1,3) #Att
             out_img = out_img + output.data
             losses.append(res.abs().mean())
@@ -233,7 +233,8 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 100000:
+        #if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 200000:
+        if train_iter % args.eval_iters == 0 or train_iter == 200000:
             print('Start evaluation...')
 
             set_eval(nets)

@@ -18,7 +18,7 @@ class EncoderCell(nn.Module):
 
         # Layers.
         self.conv = nn.Conv2d(
-            10 if stack else 3, 
+            9 if stack else 3, 
             64, 
             kernel_size=3, stride=2, padding=1, bias=False)
 

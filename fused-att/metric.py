@@ -13,7 +13,7 @@ from scipy import signal
 from scipy.ndimage.filters import convolve
 from PIL import Image
 
-
+import cv2
 
 def _FSpecialGauss(size, sigma):
     """Function to mimic the 'fspecial' gaussian MATLAB function."""
@@ -198,12 +198,30 @@ def msssim(original, compared):
     #original = original[:1072, :1920]
     #original = original[30:226, 30:226]
     #compared = compared[30:226, 30:226]
+    original = original[0][70:200, 70:200]
+    compared = compared[0][70:200, 70:200]
 
     original = original[None, ...] if original.ndim == 3 else original
     compared = compared[None, ...] if compared.ndim == 3 else compared
 
     return MultiScaleSSIM(original, compared, max_val=255)
 
+def get_sm(image, is_image, is_eval):
+    if is_image:
+        image = cv2.imread(image)
+    
+    saliency = cv2.saliency.StaticSaliencySpectralResidual_create()
+    (success, saliencyMap) = saliency.computeSaliency(image)
+    saliencyMap = (saliencyMap * 255).astype("uint8")
+    
+    saliency = cv2.saliency.StaticSaliencyFineGrained_create()
+    (success, saliencyMap) = saliency.computeSaliency(image)
+    
+    temp = 10*saliencyMap[70:200, 70:200]
+    saliencyMap[:, :] = 0*saliencyMap[:, :]
+    saliencyMap[70:200, 70:200] = temp
+
+    return saliencyMap/255.0
 
 def psnr(original, compared):
     if isinstance(original, str):
@@ -211,16 +229,23 @@ def psnr(original, compared):
     if isinstance(compared, str):
         compared = np.array(Image.open(compared).convert('RGB'))
 
+    #gm = [get_sm(original[0], 0, 1)]
+    #gm = np.array(gm)
+
     #gaze = np.array(Image.open('../../data/gaze/maps/video_gaze_map_video_700_0093.png'))
 
     #original = original[:1072, :1920]
     #width, height, _ = original.shape
     #original = original[:(width//16)*16, :(height//16)*16]
+    original = original[0][70:200, 70:200]
+    compared = compared[0][70:200, 70:200]
 
+    #mse = np.mean(np.square((original - compared)*gm[:, :, :, None]))
     mse = np.mean(np.square(original - compared))
     try:
       psnr = np.clip(
           np.multiply(np.log10(255. * 255. / mse[mse > 0.]), 10.), 0., 99.99)[0]
+      #print(psnr)
     except:
       print('PSNR error')
       print(mse)

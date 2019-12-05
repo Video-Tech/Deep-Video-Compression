@@ -247,7 +247,8 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 100000:
+        #if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 150000:
+        if train_iter % args.eval_iters == 0 or train_iter == 150000:
             print('Start evaluation...')
 
             set_eval(nets)

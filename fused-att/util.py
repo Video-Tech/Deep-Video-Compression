@@ -201,6 +201,26 @@ def forward_ctx(unet, ctx_frames):
 
     return unet_output1, unet_output2
 
+def get_sm(image, is_image, is_eval):
+    if is_image:
+        image = cv2.imread(image)
+    
+    saliency = cv2.saliency.StaticSaliencySpectralResidual_create()
+    (success, saliencyMap) = saliency.computeSaliency(image)
+    saliencyMap = (saliencyMap * 255).astype("uint8")
+    
+    saliency = cv2.saliency.StaticSaliencyFineGrained_create()
+    (success, saliencyMap) = saliency.computeSaliency(image)
+    
+    #if is_eval >= 0:
+    #    #aliencyMap[200:260, 80:130] = 5*saliencyMap[200:260, 80:130]
+    #saliencyMap[30:156, 120:214] = 100*saliencyMap[30:156, 120:214]
+    temp = saliencyMap[70:200, 70:200]
+    saliencyMap[:, :] = 0*saliencyMap[:, :]
+    saliencyMap[70:200, 70:200] = temp
+
+    return saliencyMap/255.0
+
 def get_gaze_map(fnames):
     gm = []
     gm2 = []
@@ -210,6 +230,7 @@ def get_gaze_map(fnames):
     for f in fnames:
         #print(f, '../../data/gaze/maps/video_gaze_map'+f[22:])
         img = cv2.imread('../../data/gaze/maps/video_gaze_map'+f[22:], 0)
+        #img = get_sm(f, 1, 1)
         width, height = img.shape
         if width % 16 != 0 or height % 16 != 0:
             img = img[:(width//16)*16, :(height//16)*16]

@@ -265,12 +265,12 @@ def forward_model(fnames, model, cooked_batch, ctx_frames, args, v_compress,
 
     codes = []
     prev_psnr = 0.0
-    gm, gm2 = get_gaze_map(fnames)
+    #gm, gm2 = get_gaze_map(fnames)
     for itr in range(iterations):
 
         if args.v_compress and args.stack:
-            #encoder_input = torch.cat([frame1, res, frame2], dim=1)
-            encoder_input = torch.cat([frame1, res, torch.from_numpy(gm2).float().cuda(), frame2], dim=1)
+            encoder_input = torch.cat([frame1, res, frame2], dim=1)
+            #encoder_input = torch.cat([frame1, res, torch.from_numpy(gm2).float().cuda(), frame2], dim=1)
         else:
             encoder_input = res
 

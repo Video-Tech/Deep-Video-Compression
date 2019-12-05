@@ -198,6 +198,8 @@ def msssim(original, compared):
     #original = original[:1072, :1920]
     #original = original[30:226, 30:226]
     #compared = compared[30:226, 30:226]
+    #original = original[0][70:200, 70:200]
+    #compared = compared[0][70:200, 70:200]
 
     original = original[None, ...] if original.ndim == 3 else original
     compared = compared[None, ...] if compared.ndim == 3 else compared
@@ -216,6 +218,8 @@ def psnr(original, compared):
     #original = original[:1072, :1920]
     #width, height, _ = original.shape
     #original = original[:(width//16)*16, :(height//16)*16]
+    #original = original[0][70:200, 70:200]
+    #compared = compared[0][70:200, 70:200]
 
     mse = np.mean(np.square(original - compared))
     try:
