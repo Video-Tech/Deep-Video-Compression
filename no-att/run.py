@@ -6,7 +6,7 @@ dirs = [1, 4, 5, 6]
 
 for d in dirs:
     #os.system('bash new_test.sh 2 ../../data/eval'+str(d)+' ../../data/eval'+str(d)+'_mv')
-    files = glob.glob('output/iter100000/images/*_iter10.png')
+    files = glob.glob('output/iter150000/images/*_iter10.png')
     for i, f in enumerate(sorted(files)):
         os.system('cp '+f+' temp/output_'+str("%04d" % i)+'.png')
     os.system('ffmpeg -framerate 25 -i temp/output_%04d.png -c copy temp/video_'+str(d)+'.mp4')

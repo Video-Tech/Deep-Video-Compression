@@ -204,16 +204,11 @@ class ImageFolder(data.Dataset):
             if self.args.v_compress:
                 if not (img_idx % 12 in positions):
                     continue
-                if all(os.path.isfile(fn) for fn in
-                       get_group_filenames(
-                            filename, img_idx, dist1, dist2)):
+                #if all(os.path.isfile(fn) for fn in
+                #       get_group_filenames(
+                #            filename, img_idx, dist1, dist2)):
 
-                    self.imgs.append(filename)
-            else:
-                if (img_idx % 12) != 1:
-                    continue
-                if os.path.isfile(filename):
-                    self.imgs.append(filename)
+                self.imgs.append(filename)
 
         print('%d images loaded.' % len(self.imgs))
 

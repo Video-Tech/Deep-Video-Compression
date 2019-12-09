@@ -236,6 +236,7 @@ def get_gaze_map(fnames):
             img = img[:(width//16)*16, :(height//16)*16]
         width, height = img.shape
         img = img/255.0
+        img[10:100, 10:100] = 3*img[10:100, 10:100]
         #img[img==0] = 0.01
         gm2.append([img])
         img = np.swapaxes(img, 0, 1)

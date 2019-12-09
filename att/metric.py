@@ -223,7 +223,7 @@ def psnr(original, compared):
     try:
       psnr = np.clip(
           np.multiply(np.log10(255. * 255. / mse[mse > 0.]), 10.), 0., 99.99)[0]
-      print(psnr)
+      #print(psnr)
     except:
       print('PSNR error')
       print(mse)

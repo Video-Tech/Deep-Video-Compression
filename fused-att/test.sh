@@ -53,6 +53,6 @@ python3 -u test.py \
   --max-train-iters 100000 \
   --save-model-name "gaze_model" \
   --load-model-name "gaze_model" \
-  --load-iter 70000 \
+  --load-iter 150000 \
   --save-codes \
   --save-out-img

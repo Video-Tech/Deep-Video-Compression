@@ -73,7 +73,6 @@ def run_eval(model, eval_loader, args, output_suffix=''):
 
   start_time = time.time()
   for i, (batch, ctx_frames, filenames) in enumerate(eval_loader):
-      print(filenames)
 
       batch = Variable(batch.cuda(), volatile=True)
 

@@ -65,14 +65,14 @@ class EncoderCell(nn.Module):
         hidden1 = self.rnn1(x, hidden1)
         x = hidden1[0]
         # Fuse.
-        if self.v_compress and self.fuse_encoder and self.fuse_level >= 2:
-            x = torch.cat([x, unet_output1[1], unet_output2[1]], dim=1)
+        #if self.v_compress and self.fuse_encoder and self.fuse_level >= 2:
+        #    x = torch.cat([x, unet_output1[1], unet_output2[1]], dim=1)
 
         hidden2 = self.rnn2(x, hidden2)
         x = hidden2[0]
         # Fuse.
-        if self.v_compress and self.fuse_encoder and self.fuse_level >= 3:
-            x = torch.cat([x, unet_output1[0], unet_output2[0]], dim=1)
+        #if self.v_compress and self.fuse_encoder and self.fuse_level >= 3:
+        #    x = torch.cat([x, unet_output1[0], unet_output2[0]], dim=1)
 
         hidden3 = self.rnn3(x, hidden3)
         x = hidden3[0]
@@ -115,8 +115,8 @@ class DecoderCell(nn.Module):
             bias=False)
 
         self.rnn2 = ConvLSTMCell(
-            (((128 + 256 // shrink * 2) if v_compress else 128) 
-             if self.fuse_level >= 3 else 32), #out1=256
+            32, #(((128 + 256 // shrink * 2) if v_compress else 128) 
+             #if self.fuse_level >= 3 else 32), #out1=256
             128,
             kernel_size=3,
             stride=1,
@@ -125,8 +125,8 @@ class DecoderCell(nn.Module):
             bias=False)
 
         self.rnn3 = ConvLSTMCell(
-            (((128 + 128//shrink*2) if v_compress else 128) 
-             if self.fuse_level >= 2 else 32), #out2=128
+            32,#(((128 + 128//shrink*2) if v_compress else 128) 
+             #if self.fuse_level >= 2 else 32), #out2=128
             128,
             kernel_size=3,
             stride=1,
@@ -158,8 +158,8 @@ class DecoderCell(nn.Module):
         x = hidden1[0]
         x = F.pixel_shuffle(x, 2)
 
-        if self.v_compress and self.fuse_level >= 3:
-            x = torch.cat([x, unet_output1[0], unet_output2[0]], dim=1)
+        #if self.v_compress and self.fuse_level >= 3:
+        #    x = torch.cat([x, unet_output1[0], unet_output2[0]], dim=1)
 
         hidden2 = self.rnn2(x, hidden2)
 
@@ -167,8 +167,8 @@ class DecoderCell(nn.Module):
         x = hidden2[0]
         x = F.pixel_shuffle(x, 2)
 
-        if self.v_compress and self.fuse_level >= 2:
-            x = torch.cat([x, unet_output1[1], unet_output2[1]], dim=1)
+        #if self.v_compress and self.fuse_level >= 2:
+        #    x = torch.cat([x, unet_output1[1], unet_output2[1]], dim=1)
 
         hidden3 = self.rnn3(x, hidden3)
 

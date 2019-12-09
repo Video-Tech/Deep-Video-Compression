@@ -7,20 +7,20 @@ hier=$1
 modeldir=model
 
 train="../../data/train"
-eval="../../data/eval7"
+eval="../../data/eval3"
 train_mv="../../data/train_mv"
-eval_mv="../../data/eval7_mv"
+eval_mv="../../data/eval3_mv"
 
 if [[ ${hier} == "0" ]]; then
   distance1=6
   distance2=6
-  bits=8
+  bits=4
   encoder_fuse_level=1
   decoder_fuse_level=1
 elif [[ ${hier} == "1" ]]; then
   distance1=3
   distance2=3
-  bits=8
+  bits=4
   encoder_fuse_level=2
   decoder_fuse_level=3
 elif [[ ${hier} == "2" ]]; then
