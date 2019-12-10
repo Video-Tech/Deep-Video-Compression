@@ -10,16 +10,23 @@ from torchvision.utils import save_image
 from torchvision.datasets import MNIST
 import os
 
+from network import Encoder
+from network import Decoder
 from dataset import get_loader
 
 train_dir="../../data/eval"
-eval_dir="../../data/eval"
+test_dir="../../data/eval1"
 train_mv_dir="../../data/eval_mv"
-eval_mv_dir="../../data/eval_mv"
+test_mv_dir="../../data/eval1_mv"
 
 train_loader = get_loader(
   is_train=True,
   root=train_dir, mv_dir=train_mv_dir,
+)
+
+test_loader = get_loader(
+  is_train=False,
+  root=test_dir, mv_dir=test_mv_dir,
 )
 
 def get_eval_loaders():
@@ -38,31 +45,13 @@ if not os.path.exists('./output'):
 def to_img(x):
     x = 0.5 * (x + 1)
     x = x.clamp(0, 1)
-    x = x.view(x.size(0), 2, 3, 288, 352)
+    x = x.view(x.size(0), 2, 3, 352, 640)
     return x
 
 img_transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize([0.5], [0.5])
 ])
-
-class Encoder(nn.Module):
-    def __init__(self):
-        super(Encoder, self).__init__()
-        self.encoder = nn.Conv3d(3, 16, 2)
-
-    def forward(self, x):
-        x = self.encoder(x)
-        return x
-
-class Decoder(nn.Module):
-    def __init__(self):
-        super(Decoder, self).__init__()
-        self.decoder = nn.ConvTranspose3d(16, 3, 2)
-
-    def forward(self, x):
-        x = self.decoder(x)
-        return x
 
 num_epochs = 20
 learning_rate = 1e-3
@@ -77,7 +66,7 @@ def train_autoencoder(encoder, decoder):
     for epoch in range(num_epochs):
         itr = 0
         for img, fn in train_loader:
-            img = img.permute(2, 4, 0, 3, 1)
+            img = img.permute(0, 4, 2, 3, 1)
             img = Variable(img).cuda()
     
             # ===================forward=====================
@@ -94,7 +83,7 @@ def train_autoencoder(encoder, decoder):
             print('Iteration:{}, loss:{:.4f}'.format(itr, loss.data))
 
 def test_autoencoder(encoder, decoder):
-    for img, fn in train_loader:
+    for img, fn in test_loader:
         img = img.permute(0, 4, 2, 3, 1)
         img = Variable(img).cuda()
         code = encoder(img)

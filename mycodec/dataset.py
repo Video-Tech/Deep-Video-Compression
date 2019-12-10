@@ -90,9 +90,9 @@ class ImageFolder(data.Dataset):
         print('%d images loaded.' % len(self.imgs))
 
     def __getitem__(self, index):
-        if index == 12:
-            index = 11
-        filenames = [self.imgs[index], self.imgs[index+1]]
+        if index > 10:
+            index -= 2
+        filenames = [self.imgs[index], self.imgs[index+1], self.imgs[index+2]]
         img = [self.loader(filename) for filename in filenames]
         img = np.array(img)/255.0
         data = np_to_torch(img)
