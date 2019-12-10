@@ -38,15 +38,8 @@ if not os.path.exists('./output'):
 def to_img(x):
     x = 0.5 * (x + 1)
     x = x.clamp(0, 1)
-    #x = x.view(x.size(0), 3, 352, 640)
-    x = x.view(x.size(0), 3, 288, 352)
-    print (x.shape)
+    x = x.view(x.size(0), 2, 3, 288, 352)
     return x
-
-
-num_epochs = 20
-batch_size = 2
-learning_rate = 1e-3
 
 img_transform = transforms.Compose([
     transforms.ToTensor(),
@@ -56,24 +49,23 @@ img_transform = transforms.Compose([
 class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
-        self.encoder = nn.Conv2d(3, 16, 3)
+        self.encoder = nn.Conv3d(3, 16, 2)
 
     def forward(self, x):
-        print(x.shape)
         x = self.encoder(x)
-        print(x.shape)
         return x
 
 class Decoder(nn.Module):
     def __init__(self):
         super(Decoder, self).__init__()
-        self.decoder = nn.ConvTranspose2d(16, 3, 3)
+        self.decoder = nn.ConvTranspose3d(16, 3, 2)
 
     def forward(self, x):
-        print(x.shape)
         x = self.decoder(x)
-        print(x.shape)
         return x
+
+num_epochs = 20
+learning_rate = 1e-3
 
 def train_autoencoder(encoder, decoder):
     criterion = nn.MSELoss()
@@ -85,6 +77,7 @@ def train_autoencoder(encoder, decoder):
     for epoch in range(num_epochs):
         itr = 0
         for img, fn in train_loader:
+            img = img.permute(2, 4, 0, 3, 1)
             img = Variable(img).cuda()
     
             # ===================forward=====================
@@ -102,11 +95,12 @@ def train_autoencoder(encoder, decoder):
 
 def test_autoencoder(encoder, decoder):
     for img, fn in train_loader:
+        img = img.permute(0, 4, 2, 3, 1)
         img = Variable(img).cuda()
         code = encoder(img)
         output = decoder(code)
         pic = to_img(output.cpu().data)
-        save_image(pic, './output/image_temp.png')
+        save_image(pic[0], './output/image_temp.png')
 
 encoder = Encoder().cuda()
 decoder = Decoder().cuda()

@@ -20,7 +20,7 @@ def get_loader(is_train, root, mv_dir):
 
     loader = data.DataLoader(
         dataset=dset,
-        batch_size=2,#args.batch_size if is_train else args.eval_batch_size,
+        batch_size=5,
         shuffle=is_train,
         num_workers=2
     )
@@ -90,12 +90,14 @@ class ImageFolder(data.Dataset):
         print('%d images loaded.' % len(self.imgs))
 
     def __getitem__(self, index):
-        filename = self.imgs[index]
-        img = self.loader(filename)
-        img = img/255.0
+        if index == 12:
+            index = 11
+        filenames = [self.imgs[index], self.imgs[index+1]]
+        img = [self.loader(filename) for filename in filenames]
+        img = np.array(img)/255.0
         data = np_to_torch(img)
 
-        return data, filename
+        return data, filenames
 
     def __len__(self):
         return len(self.imgs)
