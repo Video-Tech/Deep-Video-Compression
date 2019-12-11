@@ -14,9 +14,9 @@ from network import Encoder
 from network import Decoder
 from dataset import get_loader
 
-train_dir="../../data/eval"
+train_dir="../../data/train"
 test_dir="../../data/eval1"
-train_mv_dir="../../data/eval_mv"
+train_mv_dir="../../data/train_mv"
 test_mv_dir="../../data/eval1_mv"
 
 train_loader = get_loader(
@@ -45,7 +45,7 @@ if not os.path.exists('./output'):
 def to_img(x):
     x = 0.5 * (x + 1)
     x = x.clamp(0, 1)
-    x = x.view(x.size(0), 2, 3, 352, 640)
+    x = x.view(x.size(0), 3, 3, 352, 640)
     return x
 
 img_transform = transforms.Compose([
@@ -53,7 +53,7 @@ img_transform = transforms.Compose([
     transforms.Normalize([0.5], [0.5])
 ])
 
-num_epochs = 20
+num_epochs = 2
 learning_rate = 1e-3
 
 def train_autoencoder(encoder, decoder):
@@ -85,6 +85,7 @@ def train_autoencoder(encoder, decoder):
 def test_autoencoder(encoder, decoder):
     for img, fn in test_loader:
         img = img.permute(0, 4, 2, 3, 1)
+        print (img.shape)
         img = Variable(img).cuda()
         code = encoder(img)
         output = decoder(code)
