@@ -20,7 +20,7 @@ def get_loader(is_train, root, mv_dir):
 
     loader = data.DataLoader(
         dataset=dset,
-        batch_size=2,
+        batch_size=1,
         shuffle=is_train,
         num_workers=2
     )
@@ -79,8 +79,6 @@ class ImageFolder(data.Dataset):
 
         self.loader = default_loader
         self._load_image_list()
-        if is_train:
-            random.shuffle(self.imgs)
 
     def _load_image_list(self):
         self.imgs = []
