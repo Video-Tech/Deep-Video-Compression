@@ -72,7 +72,11 @@ def train_autoencoder(encoder, decoder):
             # ===================forward=====================
             encoded_output = encoder(img)
             decoded_output = decoder(encoded_output)
-    
+
+            if itr % 500 == 0:
+                torch.save(encoder.state_dict(), './models/encoder_{}_{}.pth'.format(epoch, itr))
+                torch.save(decoder.state_dict(), './models/decoder_{}_{}.pth'.format(epoch, itr))
+
             loss = criterion(decoded_output, img)
     
             # ===================backward====================
@@ -96,8 +100,5 @@ encoder = Encoder().cuda()
 decoder = Decoder().cuda()
 
 train_autoencoder(encoder, decoder)
-
-torch.save(encoder.state_dict(), './models/encoder.pth')
-torch.save(decoder.state_dict(), './models/decoder.pth')
 
 test_autoencoder(encoder, decoder)
