@@ -113,12 +113,12 @@ def get_gaze_map(fnames):
     smz = []
     for f in fnames:
         #print(f, '../../data/gaze/maps/video_gaze_map'+f[22:])
-        img = cv2.imread('../../data/gaze/maps/video_gaze_map'+f[22:], 0)
+        img = cv2.imread('../../data/gaze/test_maps/video_gaze_map'+f[27:], 0)
         width, height = img.shape
         if width % 16 != 0 or height % 16 != 0:
             img = img[:(width//16)*16, :(height//16)*16]
         width, height = img.shape
-        img = img/255.0
+        img = 1+img/255.0
         #img[img==0] = 0.01
         gm2.append([img])
         img = np.swapaxes(img, 0, 1)
@@ -212,8 +212,8 @@ while True:
             res = res - output
             if itr == 0:
                 res = res.transpose(1,3) # Att
-                #res = res*(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
-                res = res+(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
+                res = res*(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
+                #res = res+(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
                 res = res.transpose(1,3) #Att
             out_img = out_img + output.data
             losses.append(res.abs().mean())
@@ -247,8 +247,8 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        #if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 150000:
-        if train_iter % args.eval_iters == 0 or train_iter == 150000:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 150000:
+        #if train_iter % args.eval_iters == 0 or train_iter == 150000:
             print('Start evaluation...')
 
             set_eval(nets)

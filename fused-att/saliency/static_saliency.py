@@ -24,6 +24,6 @@ def saliency_map(image, is_image, is_eval):
 
 #cv2.rectangle(sm, (120,30), (214,156), 3, 2)
 
-cv2.imwrite("output.png", sm)
+#cv2.imwrite("output.png", sm)
 #cv2.imshow("Output", sm)
 #cv2.waitKey(0)

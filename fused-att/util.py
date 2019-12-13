@@ -229,13 +229,13 @@ def get_gaze_map(fnames):
     smz = []
     for f in fnames:
         #print(f, '../../data/gaze/maps/video_gaze_map'+f[22:])
-        img = cv2.imread('../../data/gaze/maps/video_gaze_map'+f[22:], 0)
+        img = cv2.imread('../../data/gaze/test_maps/video_gaze_map'+f[27:], 0)
         #img = get_sm(f, 1, 1)
         width, height = img.shape
         if width % 16 != 0 or height % 16 != 0:
             img = img[:(width//16)*16, :(height//16)*16]
         width, height = img.shape
-        img = img/255.0
+        img = 1+img/255.0
         img[10:100, 10:100] = 3*img[10:100, 10:100]
         #img[img==0] = 0.01
         gm2.append([img])

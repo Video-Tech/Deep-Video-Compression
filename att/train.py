@@ -110,7 +110,7 @@ def get_gaze_map(fnames):
     gm2 = []
     for f in fnames:
         #print(f, '../../data/gaze/maps/video_gaze_map'+f[22:])
-        img = cv2.imread('../../data/gaze/maps/video_gaze_map'+f[22:], 0)
+        img = cv2.imread('../../data/gaze/test_maps/video_gaze_map'+f[27:], 0)
         width, height = img.shape
         if width % 16 != 0 or height % 16 != 0:
             img = img[:(width//16)*16, :(height//16)*16]
@@ -234,7 +234,7 @@ while True:
             save(train_iter)
 
         #if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 200000:
-        if train_iter % args.eval_iters == 0 or train_iter == 200000:
+        if train_iter % args.eval_iters == 0 or train_iter == 500:
             print('Start evaluation...')
 
             set_eval(nets)
