@@ -26,10 +26,10 @@ class Decoder(nn.Module):
         self.conv3 = nn.Conv3d(32, 3, (1, 3, 3), padding=(0, 1, 1))
 
     def forward(self, x):
-        x = F.upsample(x, scale_factor=(1, 2, 2), mode='nearest')
+        x = F.interpolate(x, scale_factor=(1, 2, 2), mode='nearest')
         x = self.conv1(x)
-        x = F.upsample(x, scale_factor=(1, 2, 2), mode='nearest')
+        x = F.interpolate(x, scale_factor=(1, 2, 2), mode='nearest')
         x = self.conv2(x)
-        x = F.upsample(x, scale_factor=(1, 2, 2), mode='nearest')
+        x = F.interpolate(x, scale_factor=(1, 2, 2), mode='nearest')
         x = self.conv3(x)
         return x
