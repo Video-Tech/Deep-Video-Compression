@@ -115,8 +115,9 @@ class DecoderCell(nn.Module):
             bias=False)
 
         self.rnn2 = ConvLSTMCell(
-            (((128 + 256 // shrink * 2) if v_compress else 128) 
-             if self.fuse_level >= 3 else 32), #out1=256
+            #(((128 + 256 // shrink * 2) if v_compress else 128) 
+            # if self.fuse_level >= 3 else 32), #out1=256
+            32,
             128,
             kernel_size=3,
             stride=1,
@@ -125,8 +126,9 @@ class DecoderCell(nn.Module):
             bias=False)
 
         self.rnn3 = ConvLSTMCell(
-            (((128 + 128//shrink*2) if v_compress else 128) 
-             if self.fuse_level >= 2 else 32), #out2=128
+            #(((128 + 128//shrink*2) if v_compress else 128) 
+            # if self.fuse_level >= 2 else 32), #out2=128
+            32,
             128,
             kernel_size=3,
             stride=1,
