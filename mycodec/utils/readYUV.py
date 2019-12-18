@@ -25,16 +25,16 @@ class ReadYUV:
         bgr = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_I420)
         return ret, bgr
 
-#if __name__ == "__main__":
-#    filename = "akiyo_cif.yuv"
-#    size = (288, 352)
-#    cap = VideoCaptureYUV(filename, size)
-#
-#    while 1:
-#        ret, frame = cap.read()
-#        if ret:
-#            #cv2.imwrite("frame_"+str(i)+'.png', frame)
-#            cv2.imshow("frame", frame)
-#            cv2.waitKey(30)
-#        else:
-#            break
+if __name__ == "__main__":
+    filename = "akiyo_cif.yuv"
+    size = (288, 352)
+    cap = VideoCaptureYUV(filename, size)
+
+    while 1:
+        ret, frame = cap.read()
+        if ret:
+            #cv2.imwrite("frame_"+str(i)+'.png', frame)
+            cv2.imshow("frame", frame)
+            cv2.waitKey(30)
+        else:
+            break
