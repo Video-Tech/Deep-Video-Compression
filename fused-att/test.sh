@@ -6,27 +6,27 @@ hier=$1
 
 modeldir=model
 
-train="../../data/train"
-eval="../../data/eval1"
-train_mv="../../data/train_mv"
-eval_mv="../../data/eval1_mv"
+train="../../data/test/user-study"
+eval="../../data/test/user-study"
+train_mv="../../data/test/user-study_mv"
+eval_mv="../../data/test/user-study_mv"
 
 if [[ ${hier} == "0" ]]; then
   distance1=6
   distance2=6
-  bits=8
+  bits=16
   encoder_fuse_level=1
   decoder_fuse_level=1
 elif [[ ${hier} == "1" ]]; then
   distance1=3
   distance2=3
-  bits=8
+  bits=16
   encoder_fuse_level=2
   decoder_fuse_level=3
 elif [[ ${hier} == "2" ]]; then
   distance1=1
   distance2=2
-  bits=4
+  bits=16
   encoder_fuse_level=1
   decoder_fuse_level=1
 else
@@ -40,7 +40,7 @@ fi
 # (for the demo data it's okay.)
 
 
-python3 -u test.py \
+python3 -u train.py \
   --train ${train} \
   --eval ${eval} \
   --train-mv ${train_mv} \
@@ -50,9 +50,9 @@ python3 -u test.py \
   --v-compress --warp --stack --fuse-encoder \
   --bits ${bits} \
   --distance1 ${distance1} --distance2 ${distance2} \
-  --max-train-iters 100000 \
+  --max-train-iters 30000 \
   --save-model-name "gaze_model" \
   --load-model-name "gaze_model" \
-  --load-iter 150000 \
+  --load-iter 19000 \
   --save-codes \
   --save-out-img
