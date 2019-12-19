@@ -11,12 +11,12 @@ from torchvision.datasets import MNIST
 import os
 
 from network import Encoder
+from network import Binarizer
 from network import Decoder
 from dataset import get_loader
 from options import parser
 from train import train_codec
 from test import test_codec
-from utils.readYUV import ReadYUV
 
 args = parser.parse_args()
 print(args)
@@ -52,9 +52,10 @@ def save_model(encoder, decoder, epoch, itr):
     torch.save(decoder.state_dict(), './models/decoder_{}_{}.pth'.format(epoch, itr))
 
 encoder = Encoder().cuda()
+binarizer = Binarizer().cuda()
 decoder = Decoder().cuda()
 
-#train_codec(train_loader, encoder, decoder)
+train_codec(train_loader, encoder, binarizer, decoder)
 
 load_model(encoder, decoder, 1, 10000)
 
