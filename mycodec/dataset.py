@@ -20,7 +20,7 @@ def get_loader(is_train, root, mv_dir):
 
     loader = data.DataLoader(
         dataset=dset,
-        batch_size=2,
+        batch_size=3,
         shuffle=is_train,
         num_workers=2
     )

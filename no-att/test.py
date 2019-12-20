@@ -17,13 +17,6 @@ from util import prepare_inputs, forward_ctx
 args = parser.parse_args()
 print(args)
 
-############### Data ###############
-train_loader = get_loader(
-  is_train=True,
-  root=args.train, mv_dir=args.train_mv, 
-  args=args
-)
-
 def get_eval_loaders():
   # We can extend this dict to evaluate on multiple datasets.
   eval_loaders = {

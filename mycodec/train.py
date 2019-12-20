@@ -18,7 +18,7 @@ def train_codec(train_loader, encoder, binarizer, decoder):
 
             optimizer.zero_grad()
 
-            (enc1, enc2, enc3, dec1, dec2, dec3, dec4) = init_lstm(2, 352, 640)#batch_size, height, width)
+            (enc1, enc2, enc3, dec1, dec2, dec3, dec4) = init_lstm(3, 352, 640)#batch_size, height, width)
             
             #img = img.permute(0, 4, 2, 3, 1)
             img = Variable(img).cuda()
