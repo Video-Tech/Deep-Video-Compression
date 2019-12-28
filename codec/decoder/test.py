@@ -29,13 +29,13 @@ def get_eval_loaders():
 
 
 ############### Model ###############
-_, _, decoder, unet = get_models(
+encoder, binarizer, decoder, unet = get_models(
   args=args, v_compress=args.v_compress, 
   bits=args.bits,
   encoder_fuse_level=args.encoder_fuse_level,
   decoder_fuse_level=args.decoder_fuse_level)
 
-nets = [decoder]
+nets = [encoder, binarizer, decoder]
 if unet is not None:
   nets.append(unet)
 
@@ -60,7 +60,7 @@ if not os.path.exists(args.model_dir):
 
 ############### Checkpoints ###############
 def resume(model_name, index):
-  names = ['decoder', 'unet']
+  names = ['encoder', 'binarizer', 'decoder', 'unet']
 
   for net_idx, net in enumerate(nets):
     if net is not None:
@@ -74,7 +74,7 @@ def resume(model_name, index):
 
 
 def save(index):
-  names = ['decoder', 'unet']
+  names = ['encoder', 'binarizer', 'decoder', 'unet']
 
   for net_idx, net in enumerate(nets):
     if net is not None:
@@ -83,6 +83,8 @@ def save(index):
                    args.model_dir, args.save_model_name, 
                    names[net_idx], index))
 
+
+############### Training ###############
 
 train_iter = 0
 just_resumed = False
@@ -103,5 +105,18 @@ for eval_name, eval_loader in eval_loaders.items():
     eval_begin = time.time()
     eval_loss, mssim, psnr = run_eval(nets, eval_loader, args,
         output_suffix='iter%d' % train_iter)
+
+    print('Evaluation @iter %d done in %d secs' % (
+        train_iter, time.time() - eval_begin))
+    print('%s Loss   : ' % eval_name
+          + '\t'.join(['%.5f' % el for el in eval_loss.tolist()]))
+    print('%s MS-SSIM: ' % eval_name
+          + '\t'.join(['%.5f' % el for el in mssim.tolist()]))
+    #print('%s ATT MS-SSIM: ' % eval_name
+    #      + '\t'.join(['%.5f' % el for el in att_msssim.tolist()]))
+    print('%s PSNR   : ' % eval_name
+          + '\t'.join(['%.5f' % el for el in psnr.tolist()]))
+    #print('%s ATT PSNR   : ' % eval_name
+    #      + '\t'.join(['%.5f' % el for el in att_psnr.tolist()]))
 
 set_train(nets)

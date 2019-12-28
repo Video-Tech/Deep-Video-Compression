@@ -40,7 +40,7 @@ fi
 # (for the demo data it's okay.)
 
 
-python3 -u encode.py \
+python3 -u test.py \
   --train ${train} \
   --eval ${eval} \
   --train-mv ${train_mv} \

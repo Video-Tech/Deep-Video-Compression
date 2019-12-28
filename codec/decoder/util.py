@@ -220,17 +220,23 @@ def get_gaze_map(fnames):
 
 def forward_model(fnames, model, cooked_batch, ctx_frames, args, v_compress,
                   iterations, encoder_fuse_level, decoder_fuse_level):
-    _, binarizer, decoder, unet = model
+    encoder, binarizer, decoder, unet = model
     res, _, _, flows = cooked_batch
+
+    ctx_frames = Variable(ctx_frames.cuda()) - 0.5
+    frame1 = ctx_frames[:, :3]
+    frame2 = ctx_frames[:, 3:]
 
     init_rnn = init_lstm
 
     batch_size, _, height, width = res.size()
-    (_, _, _,
+    (encoder_h_1, encoder_h_2, encoder_h_3,
      decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4) = init_rnn(batch_size,
                                                                       height,
                                                                       width,
                                                                       args)
+
+    original = res.data.cpu().numpy() + 0.5
 
     out_img = torch.zeros(1, 3, height, width) + 0.5
     out_imgs = []
@@ -243,6 +249,7 @@ def forward_model(fnames, model, cooked_batch, ctx_frames, args, v_compress,
     dec_unet_output1 = Variable(torch.zeros(args.batch_size,), volatile=True).cuda()
     dec_unet_output2 = Variable(torch.zeros(args.batch_size,), volatile=True).cuda()
     if v_compress:
+        # Use decoded context frames to decode.
         dec_unet_output1, dec_unet_output2 =  prepare_unet_output(
             unet, torch.cat([frame1, frame2], dim=0), flows, warp=args.warp)
 
@@ -256,16 +263,48 @@ def forward_model(fnames, model, cooked_batch, ctx_frames, args, v_compress,
             dec_unet_output1[jj] = None
             dec_unet_output2[jj] = None
 
+    codes = []
+    prev_psnr = 0.0
+    #gm, gm2 = get_gaze_map(fnames)
+    for itr in range(iterations):
+
+        if args.v_compress and args.stack:
+            encoder_input = torch.cat([frame1, res, frame2], dim=1)
+            #encoder_input = torch.cat([frame1, res, torch.from_numpy(gm2).float().cuda(), frame2], dim=1)
+        else:
+            encoder_input = res
+
+        # Encode.
+        encoded, encoder_h_1, encoder_h_2, encoder_h_3 = encoder(
+            encoder_input, encoder_h_1, encoder_h_2, encoder_h_3,
+            enc_unet_output1, enc_unet_output2)
+
+        # Binarize.
+        code = binarizer(encoded)
+        if args.save_codes:
+            codes.append(code.data.cpu().numpy())
+
+        #new_codes = np.load('output/iter100000/codes/video_700_0011.png.codes.npz')
+        #files = new_codes.files
+        #for f in files:
+        #    print(new_codes[f].shape)
+
         output, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4 = decoder(
             code, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4,
             dec_unet_output1, dec_unet_output2)
 
+        res = res - output
+        #if itr == 0:
+        #    res = res.transpose(1,3) # Att
+        #    res = res*(torch.from_numpy(gm).float().cuda()[:, :, :, None]) #Att
+        #    res = res.transpose(1,3) #Att
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)
 
         out_imgs.append(out_img_np)
+        losses.append(float(res.abs().mean().data.cpu().numpy()))
 
-    return np.array(out_imgs)
+    return original, np.array(out_imgs), np.array(losses), np.array(codes)
 
 
 def save_numpy_array_as_image(filename, arr):

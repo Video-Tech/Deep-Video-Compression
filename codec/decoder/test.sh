@@ -6,10 +6,10 @@ hier=$1
 
 modeldir=model
 
-train="../../data/train"
-eval="../../data/eval1"
-train_mv="../../data/train_mv"
-eval_mv="../../data/eval1_mv"
+train="../../../data/train"
+eval="../../../data/eval1"
+train_mv="../../../data/train_mv"
+eval_mv="../../../data/eval1_mv"
 
 if [[ ${hier} == "0" ]]; then
   distance1=6
@@ -40,7 +40,7 @@ fi
 # (for the demo data it's okay.)
 
 
-python3 -u decode.py \
+python3 -u test.py \
   --train ${train} \
   --eval ${eval} \
   --train-mv ${train_mv} \
