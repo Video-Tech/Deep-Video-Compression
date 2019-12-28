@@ -35,31 +35,14 @@ def save_output_images(name, ex_imgs):
 def finish_batch(args, filenames, original, out_imgs,
                  losses, code_batch, output_suffix):
 
-  all_losses, all_msssim, all_psnr = [], [], []
   for ex_idx, filename in enumerate(filenames):
       filename = filename.split('/')[-1]
-      if args.save_codes:
-        save_codes(
-          os.path.join(args.out_dir, output_suffix, 'codes', filename),
-          code_batch[:, ex_idx, :, :, :]
-        )
 
       if args.save_out_img:
         save_output_images(
           os.path.join(args.out_dir, output_suffix, 'images', filename),
           out_imgs[:, ex_idx, :, :, :]
         )
-
-      msssim, psnr = evaluate(
-        original[None, ex_idx], 
-        [out_img[None, ex_idx] for out_img in out_imgs])
-
-      all_losses.append(losses)
-      all_msssim.append(msssim)
-      all_psnr.append(psnr)
-
-  return all_losses, all_msssim, all_psnr
-
 
 def run_eval(model, eval_loader, args, output_suffix=''):
 
@@ -69,28 +52,12 @@ def run_eval(model, eval_loader, args, output_suffix=''):
       print("Creating directory %s." % cur_eval_dir)
       os.makedirs(cur_eval_dir)
 
-  all_losses, all_msssim, all_psnr = [], [], []
-
   start_time = time.time()
   for i, (batch, ctx_frames, filenames) in enumerate(eval_loader):
 
       batch = Variable(batch.cuda(), volatile=True)
 
-      original, out_imgs, losses, code_batch = eval_forward(
+      out_imgs = eval_forward(
           model, (batch, ctx_frames), args, filenames)
 
-      losses, msssim, psnr = finish_batch(
-          args, filenames, original, out_imgs, 
-          losses, code_batch, output_suffix)
-
-      all_losses += losses
-      all_msssim += msssim
-      all_psnr += psnr
-
-      if i % 10 == 0:
-        print('\tevaluating iter %d (%f seconds)...' % (
-          i, time.time() - start_time))
-
-  return (np.array(all_losses).mean(axis=0),
-          np.array(all_msssim).mean(axis=0),
-          np.array(all_psnr).mean(axis=0))
+      finish_batch(args, filenames, original, out_imgs, output_suffix)

@@ -36,11 +36,6 @@ test_loader = get_loader(
   root=test_dir, mv_dir=test_mv_dir,
 )
 
-img_transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize([0.5], [0.5])
-])
-
 def load_model(encoder, decoder, epoch, itr):
     path = './models/encoder_{}_{}.pth'.format(epoch, itr)
     encoder.load_state_dict(torch.load(path))
