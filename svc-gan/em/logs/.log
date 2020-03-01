@@ -1,0 +1,8 @@
+Namespace(batch_size=2, bits=2, checkpoint_iters=5000, clip=0.5, decoder_fuse_level=1, distance1=1, distance2=2, encoder_fuse_level=1, eval='/home/mallesh/deepvideo/data/eval', eval_batch_size=1, eval_iters=1000, eval_mv='/home/mallesh/deepvideo/data/eval_mv', fuse_encoder=True, gamma=0.5, gpus='0', iterations=10, load_iter=None, load_model_name=None, lr=0.00025, max_train_iters=30000, model_dir='model', num_crops=2, out_dir='output', patch=64, save_codes=False, save_model_name='demo', save_out_img=True, schedule='50000,60000,70000,80000,90000', shrink=2, stack=True, train='/home/mallesh/deepvideo/data/train', train_mv='/home/mallesh/deepvideo/data/train_mv', v_compress=True, warp=True)
+
+Creating loader for /home/mallesh/deepvideo/data/train...
+26556 images loaded.
+	distance=1/2
+Loader for 26556 images (13278 batches) created.
+	Encoder fuse level: 1
+	Decoder fuse level: 1
