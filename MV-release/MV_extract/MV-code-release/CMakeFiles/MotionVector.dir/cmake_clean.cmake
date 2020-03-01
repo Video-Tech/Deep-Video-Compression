@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/MotionVector.dir/draw_flow.cpp.o"
-  "MotionVector.pdb"
   "MotionVector"
+  "MotionVector.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

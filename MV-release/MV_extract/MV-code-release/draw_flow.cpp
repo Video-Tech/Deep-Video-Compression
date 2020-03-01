@@ -64,11 +64,11 @@ int main(int argc, char** argv){
 
     //int video_width = 640;
     //int video_height = 360;
-    int video_width = 256;
-    int video_height = 256;
-    // int video_width = 352;
+    //int video_width = 256;
+    //int video_height = 256;
+    int video_width = 1920;
     //int video_width = 480;
-    //int video_height = 288;
+    int video_height = 1080;
     //int video_height = 200;
 
 	int frame_num = 0;
