@@ -1,0 +1,54 @@
+Namespace(batch_size=2, bits=2, checkpoint_iters=5000, clip=0.5, decoder_fuse_level=1, distance1=1, distance2=2, encoder_fuse_level=1, eval='/home/mallesh/deepvideo/data/eval', eval_batch_size=1, eval_iters=1000, eval_mv='/home/mallesh/deepvideo/data/eval_mv', fuse_encoder=True, gamma=0.5, gpus='0', iterations=10, load_iter=None, load_model_name=None, lr=0.00025, max_train_iters=30000, model_dir='model', num_crops=2, out_dir='output', patch=64, save_codes=False, save_model_name='demo', save_out_img=True, schedule='50000,60000,70000,80000,90000', shrink=2, stack=True, train='/home/mallesh/deepvideo/data/train', train_mv='/home/mallesh/deepvideo/data/train_mv', v_compress=True, warp=True)
+
+Creating loader for /home/mallesh/deepvideo/data/train...
+26556 images loaded.
+	distance=1/2
+Loader for 26556 images (13278 batches) created.
+	Encoder fuse level: 1
+	Decoder fuse level: 1
+initialize network with normal
+[TRAIN] Iter[1]; LR: 0.00025; Dis Loss: 4.561995; Gen Loss: 0.737321; Rec Loss: 0.203432;
+[TRAIN] Iter[2]; LR: 0.00025; Dis Loss: 3.807079; Gen Loss: 0.328707; Rec Loss: 0.205961;
+[TRAIN] Iter[3]; LR: 0.00025; Dis Loss: 3.314182; Gen Loss: 0.555973; Rec Loss: 0.277004;
+[TRAIN] Iter[4]; LR: 0.00025; Dis Loss: 1.873175; Gen Loss: 0.594477; Rec Loss: 0.169838;
+[TRAIN] Iter[5]; LR: 0.00025; Dis Loss: 1.560751; Gen Loss: 0.436166; Rec Loss: 0.254123;
+[TRAIN] Iter[6]; LR: 0.00025; Dis Loss: 1.986398; Gen Loss: 0.514044; Rec Loss: 0.223250;
+[TRAIN] Iter[7]; LR: 0.00025; Dis Loss: 1.603780; Gen Loss: 0.343798; Rec Loss: 0.203850;
+[TRAIN] Iter[8]; LR: 0.00025; Dis Loss: 0.930914; Gen Loss: 0.329491; Rec Loss: 0.168437;
+[TRAIN] Iter[9]; LR: 0.00025; Dis Loss: 0.689291; Gen Loss: 0.313607; Rec Loss: 0.173206;
+[TRAIN] Iter[10]; LR: 0.00025; Dis Loss: 0.736866; Gen Loss: 0.307647; Rec Loss: 0.233248;
+[TRAIN] Iter[11]; LR: 0.00025; Dis Loss: 0.369923; Gen Loss: 0.238894; Rec Loss: 0.177020;
+[TRAIN] Iter[12]; LR: 0.00025; Dis Loss: 0.733474; Gen Loss: 0.338568; Rec Loss: 0.251728;
+[TRAIN] Iter[13]; LR: 0.00025; Dis Loss: 0.909783; Gen Loss: 0.199426; Rec Loss: 0.149385;
+[TRAIN] Iter[14]; LR: 0.00025; Dis Loss: 0.372799; Gen Loss: 0.288061; Rec Loss: 0.221348;
+[TRAIN] Iter[15]; LR: 0.00025; Dis Loss: 0.850875; Gen Loss: 0.210740; Rec Loss: 0.179764;
+[TRAIN] Iter[16]; LR: 0.00025; Dis Loss: 0.489082; Gen Loss: 0.246609; Rec Loss: 0.179465;
+[TRAIN] Iter[17]; LR: 0.00025; Dis Loss: 0.320893; Gen Loss: 0.328827; Rec Loss: 0.294058;
+[TRAIN] Iter[18]; LR: 0.00025; Dis Loss: 0.321873; Gen Loss: 0.289288; Rec Loss: 0.258849;
+[TRAIN] Iter[19]; LR: 0.00025; Dis Loss: 0.506785; Gen Loss: 0.220078; Rec Loss: 0.174358;
+[TRAIN] Iter[20]; LR: 0.00025; Dis Loss: 0.435311; Gen Loss: 0.232688; Rec Loss: 0.162918;
+[TRAIN] Iter[21]; LR: 0.00025; Dis Loss: 0.332851; Gen Loss: 0.180757; Rec Loss: 0.163923;
+[TRAIN] Iter[22]; LR: 0.00025; Dis Loss: 0.370402; Gen Loss: 0.412089; Rec Loss: 0.321868;
+[TRAIN] Iter[23]; LR: 0.00025; Dis Loss: 0.287370; Gen Loss: 0.244924; Rec Loss: 0.178301;
+[TRAIN] Iter[24]; LR: 0.00025; Dis Loss: 0.208167; Gen Loss: 0.281344; Rec Loss: 0.231137;
+[TRAIN] Iter[25]; LR: 0.00025; Dis Loss: 0.278051; Gen Loss: 0.213590; Rec Loss: 0.188360;
+[TRAIN] Iter[26]; LR: 0.00025; Dis Loss: 0.342460; Gen Loss: 0.284085; Rec Loss: 0.237867;
+[TRAIN] Iter[27]; LR: 0.00025; Dis Loss: 0.255942; Gen Loss: 0.418200; Rec Loss: 0.371563;
+[TRAIN] Iter[28]; LR: 0.00025; Dis Loss: 0.245484; Gen Loss: 0.270490; Rec Loss: 0.221234;
+[TRAIN] Iter[29]; LR: 0.00025; Dis Loss: 0.306655; Gen Loss: 0.250929; Rec Loss: 0.218517;
+[TRAIN] Iter[30]; LR: 0.00025; Dis Loss: 0.229132; Gen Loss: 0.212955; Rec Loss: 0.174802;
+[TRAIN] Iter[31]; LR: 0.00025; Dis Loss: 0.241378; Gen Loss: 0.204819; Rec Loss: 0.159101;
+[TRAIN] Iter[32]; LR: 0.00025; Dis Loss: 0.182130; Gen Loss: 0.254752; Rec Loss: 0.223995;
+[TRAIN] Iter[33]; LR: 0.00025; Dis Loss: 0.161796; Gen Loss: 0.230956; Rec Loss: 0.211058;
+[TRAIN] Iter[34]; LR: 0.00025; Dis Loss: 0.294332; Gen Loss: 0.327455; Rec Loss: 0.277640;
+[TRAIN] Iter[35]; LR: 0.00025; Dis Loss: 0.252160; Gen Loss: 0.188789; Rec Loss: 0.163622;
+[TRAIN] Iter[36]; LR: 0.00025; Dis Loss: 0.279516; Gen Loss: 0.247486; Rec Loss: 0.205370;
+[TRAIN] Iter[37]; LR: 0.00025; Dis Loss: 0.235440; Gen Loss: 0.225048; Rec Loss: 0.179336;
+[TRAIN] Iter[38]; LR: 0.00025; Dis Loss: 0.362408; Gen Loss: 0.248480; Rec Loss: 0.174034;
+[TRAIN] Iter[39]; LR: 0.00025; Dis Loss: 0.220459; Gen Loss: 0.246899; Rec Loss: 0.170488;
+[TRAIN] Iter[40]; LR: 0.00025; Dis Loss: 0.297222; Gen Loss: 0.216799; Rec Loss: 0.175519;
+[TRAIN] Iter[41]; LR: 0.00025; Dis Loss: 0.301515; Gen Loss: 0.230657; Rec Loss: 0.165484;
+[TRAIN] Iter[42]; LR: 0.00025; Dis Loss: 0.320423; Gen Loss: 0.225637; Rec Loss: 0.186340;
+[TRAIN] Iter[43]; LR: 0.00025; Dis Loss: 0.436971; Gen Loss: 0.228471; Rec Loss: 0.176102;
+[TRAIN] Iter[44]; LR: 0.00025; Dis Loss: 0.193130; Gen Loss: 0.222059; Rec Loss: 0.177813;
+[TRAIN] Iter[45]; LR: 0.00025; Dis Loss: 0.258518; Gen Loss: 0.210745; Rec Loss: 0.171295;

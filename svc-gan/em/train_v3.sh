@@ -7,9 +7,9 @@ hier=$1
 modeldir=model
 
 train="/home/mallesh/deepvideo/data/train"
-eval="/home/mallesh/deepvideo/data/eval"
+eval="/home/mallesh/deepvideo/data/vtl/eval"
 train_mv="/home/mallesh/deepvideo/data/train_mv"
-eval_mv="/home/mallesh/deepvideo/data/eval_mv"
+eval_mv="/home/mallesh/deepvideo/data/vtl/eval_mv"
 
 if [[ ${hier} == "0" ]]; then
   distance1=6
@@ -54,5 +54,6 @@ python3 -u train_v3.py \
   --max-train-iters 30000 \
   --checkpoint-iters 5000 \
   --eval-iters 1000 \
+  --load-model-name "demo" --load-iter 30000 \
   --save-out-img \
   --batch-size 2

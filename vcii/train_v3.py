@@ -119,7 +119,7 @@ if args.load_model_name:
     just_resumed = True
 
 
-is_dis_training = True
+is_dis_training = False
 dis_times_per_gen = 5
 dis_itr = 0
 lamb = 0.1
@@ -233,28 +233,28 @@ while True:
               losses_rec.append(rec_loss_inst)
 
           #bp_t1 = time.time()
-          adv_lossG = criterionGAN(netD(out_img-0.5), True)
+          ###adv_lossG = criterionGAN(netD(out_img-0.5), True)
           #gen_loss = sum(losses) / args.iterations
           rec_loss = sum(losses_rec) / args.iterations
-          #gen_loss = rec_loss
-          gen_loss = rec_loss + lamb * adv_lossG
+          gen_loss = rec_loss
+          ###gen_loss = rec_loss + lamb * adv_lossG
 
-          p2p_networks.set_requires_grad(netD, False)
+          ###p2p_networks.set_requires_grad(netD, False)
           solver.zero_grad()
           gen_loss.backward()
           for net in [encoder, binarizer, decoder, unet]:
               if net is not None:
                   torch.nn.utils.clip_grad_norm(net.parameters(), args.clip)
           solver.step()
-          p2p_networks.set_requires_grad(netD, True)
+          ###p2p_networks.set_requires_grad(netD, True)
           #batch_t1 = time.time()
 
           #Backprop: {:.4f} sec; Batch: {:.4f} sec'.
           print(
-              '[TRAIN] Iter[{}]; LR: {}; Dis Loss: {:.6f}; Gen Loss: {:.6f}; Rec Loss: {:.6f};'. 
+              '[TRAIN] Iter[{}]; LR: {}; Gen Loss: {:.6f}; Rec Loss: {:.6f};'. 
               format(train_iter, 
                      scheduler.get_lr()[0],
-                     adv_lossD.item(), 
+                     #adv_lossD.item(), 
                      gen_loss.item(),
                      rec_loss.item()))
 
@@ -293,7 +293,7 @@ while True:
               set_train(nets)
               just_resumed = False
 
-          is_dis_training = True
+          is_dis_training = False
 
     if just_resumed or train_iter == 30000:
         print('Start evaluation...')
