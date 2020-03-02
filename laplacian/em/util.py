@@ -125,17 +125,20 @@ def set_train(models):
 
 
 def eval_forward(model, batch, args):
-    batch, batch_orig, ctx_frames = batch
+    batch, batch_g, batch_l, ctx_frames = batch
     cooked_batch = prepare_batch(
         batch, args.v_compress, args.warp)
-    cooked_batch_orig = prepare_batch(
-        batch_orig, args.v_compress, args.warp)
+    cooked_batch_g = prepare_batch(
+        batch_g, args.v_compress, args.warp)
+    cooked_batch_l = prepare_batch(
+        batch_l, args.v_compress, args.warp)
 
 
     return forward_model(
         model=model,
         cooked_batch=cooked_batch,
-        cooked_batch_orig=cooked_batch_orig,
+        cooked_batch_g=cooked_batch_g,
+        cooked_batch_l=cooked_batch_l,
         ctx_frames=ctx_frames,
         args=args,
         v_compress=args.v_compress,
@@ -205,11 +208,12 @@ def forward_ctx(unet, ctx_frames):
     return unet_output1, unet_output2
 
 
-def forward_model(model, cooked_batch, cooked_batch_orig, ctx_frames, args, v_compress,
+def forward_model(model, cooked_batch, cooked_batch_g, cooked_batch_l, ctx_frames, args, v_compress,
                   iterations, encoder_fuse_level, decoder_fuse_level):
     encoder, binarizer, decoder, unet = model
     res, _, _, flows = cooked_batch
-    res_orig, _, _, _ = cooked_batch_orig
+    res_g, frame_g1, frame_g2, _ = cooked_batch_g
+    res_l, frame_l1, frame_l2, _ = cooked_batch_l
 
     ctx_frames = Variable(ctx_frames.cuda()) - 0.5
     frame1 = ctx_frames[:, :3]
@@ -235,36 +239,21 @@ def forward_model(model, cooked_batch, cooked_batch_orig, ctx_frames, args, v_co
     out_imgs = []
     losses = []
 
-    # UNet.
-    #enc_unet_output1 = Variable(torch.zeros(args.batch_size,), volatile=True).cuda()
-    #enc_unet_output2 = Variable(torch.zeros(args.batch_size,), volatile=True).cuda()
-
-    #if v_compress:
-        # Use decoded context frames to decode.
-        #enc_unet_output1, enc_unet_output2 =  prepare_unet_output(
-        #    unet, torch.cat([frame1, frame2], dim=0), flows, warp=args.warp)
-        
-        #old_enc_unet_output1, old_enc_unet_output2 = enc_unet_output1, enc_unet_output2
-
-        #assert len(enc_unet_output1) == 3 and len(enc_unet_output2) == 3, (len(enc_unet_output1), len(enc_unet_output2))
-        #for jj in range(3 - max(encoder_fuse_level, decoder_fuse_level)):
-         #   enc_unet_output1[jj] = None
-        #    enc_unet_output2[jj] = None
-        #    old_enc_unet_output1[jj] = None
-        #    old_enc_unet_output2[jj] = None
-
     codes = []
     prev_psnr = 0.0
-    #old_encoder = torch.load("./../bm/model/wunet_64x16_encoder_20000")
-    #old_binarizer = torch.load("./../bm/model/wunet_64x16_binarizer_20000")
-    old_encoder = torch.load("./../bm/model/wunet_2:256_3:256_64x16_encoder_20000")
-    old_binarizer = torch.load("./../bm/model/wunet_2:256_3:256_64x16_binarizer_20000")
+    old_encoder = torch.load("./../bm/model/wunet_2:256_3:256_64x16_encoder_30000")
+    old_binarizer = torch.load("./../bm/model/wunet_2:256_3:256_64x16_binarizer_30000")
     for _ in range(iterations):
 
         if args.v_compress and args.stack:
-            encoder_input = torch.cat([frame1, res, frame2], dim=1)
+            encoder_input = torch.cat([frame_l1, res_l, frame_l2], dim=1)
         else:
-        	encoder_input = res
+            encoder_input = res_l
+
+        if args.v_compress and args.stack:
+            old_encoder_input = torch.cat([frame_g1, res_g, frame_g2], dim=1)
+        else:
+            old_encoder_input = res_g
 
 	#print(old_enc_unet_output1[2].shape, enc_unet_output1[2].shape)
         # Encode.
@@ -275,8 +264,7 @@ def forward_model(model, cooked_batch, cooked_batch_orig, ctx_frames, args, v_co
         # Binarize.
         code = binarizer(encoded)
         
-        #old_encoded, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3 = old_encoder(encoder_input, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3, old_enc_unet_output1, old_enc_unet_output2)
-        old_encoded, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3 = old_encoder(encoder_input, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3)
+        old_encoded, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3 = old_encoder(old_encoder_input, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3)
         old_codes = old_binarizer(old_encoded)
         new_codes = torch.cat([code, old_codes], dim=1)
 
@@ -286,6 +274,8 @@ def forward_model(model, cooked_batch, cooked_batch_orig, ctx_frames, args, v_co
         output, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4 = decoder(
             new_codes, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4)
 
+        res_l = res_l - output
+        res_g = res_g - output
         res = res - output
         out_img = out_img + output.data.cpu()
         out_img_np = out_img.numpy().clip(0, 1)

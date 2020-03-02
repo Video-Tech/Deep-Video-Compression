@@ -118,11 +118,11 @@ if args.load_model_name:
 #         fuse_level=args.encoder_fuse_level
 #     ).cuda()
 # old_encoder.load_state_dict("./../bm/model/wunet_2:256_3:256_64x16_encoder_5000")
-old_encoder = torch.load("./../bm/model/wunet_2:256_3:256_64x16_encoder_20000")
+old_encoder = torch.load("./../bm/model/wunet_2:256_3:256_64x16_encoder_30000")
 
 # old_binarizer = network.Binarizer(bits).cuda()
 # old_binarizer.load_state_dict("./../bm/model/wunet_2:256_3:256_64x16_binarizer_5000")
-old_binarizer = torch.load("./../bm/model/wunet_2:256_3:256_64x16_binarizer_20000")
+old_binarizer = torch.load("./../bm/model/wunet_2:256_3:256_64x16_binarizer_30000")
 
 while True:
 
@@ -202,7 +202,7 @@ while True:
 	    
 	    #print(codes.shape)
             #old_encoded, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3 = old_encoder(encoder_input, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3, enc_unet_output1, enc_unet_output2)
-            old_encoded, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3 = old_encoder(encoder_input, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3)
+            old_encoded, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3 = old_encoder(old_encoder_input, old_encoder_h_1, old_encoder_h_2, old_encoder_h_3)
             old_codes = old_binarizer(old_encoded)
             new_codes = torch.cat([codes, old_codes], dim=1)
 
@@ -214,9 +214,9 @@ while True:
 
             res_l = res_l - output
             res_g = res_g - output
-            res1 = res - output
+            res = res - output
             out_img = out_img + output.data
-            losses.append(res1.abs().mean())
+            losses.append(res.abs().mean())
 
         bp_t1 = time.time()
 
