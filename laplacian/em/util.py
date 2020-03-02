@@ -233,7 +233,7 @@ def forward_model(model, cooked_batch, cooked_batch_g, cooked_batch_l, ctx_frame
      _, _, _ , _) = init_rnn(batch_size, height, width, args)
 
 
-    original = res_orig.data.cpu().numpy() + 0.5
+    original = res.data.cpu().numpy() + 0.5
 
     out_img = torch.zeros(1, 3, height, width) + 0.5
     out_imgs = []
