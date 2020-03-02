@@ -74,9 +74,10 @@ def run_eval(model, eval_loader, args, output_suffix=''):
   for i, (batch, batch_g, batch_l, ctx_frames, filenames) in enumerate(eval_loader):
 
       batch = Variable(batch.cuda(), volatile=True)
+      batch_l = Variable(batch_l.cuda(), volatile=True)
 
       original, out_imgs, losses, code_batch = eval_forward(
-          model, (batch, ctx_frames), args)
+          model, (batch_l, batch, ctx_frames), args)
 
       losses, msssim, psnr = finish_batch(
           args, filenames, original, out_imgs, 

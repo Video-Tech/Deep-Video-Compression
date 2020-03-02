@@ -125,14 +125,17 @@ def set_train(models):
 
 
 def eval_forward(model, batch, args):
-    batch, ctx_frames = batch
+    batch, batch_orig, ctx_frames = batch
     cooked_batch = prepare_batch(
         batch, args.v_compress, args.warp)
+    cooked_batch_orig = prepare_batch(
+        batch_orig, args.v_compress, args.warp)
 
 
     return forward_model(
         model=model,
         cooked_batch=cooked_batch,
+        cooked_batch_orig=cooked_batch_orig,
         ctx_frames=ctx_frames,
         args=args,
         v_compress=args.v_compress,
@@ -202,10 +205,11 @@ def forward_ctx(unet, ctx_frames):
     return unet_output1, unet_output2
 
 
-def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
+def forward_model(model, cooked_batch, cooked_batch_orig, ctx_frames, args, v_compress,
                   iterations, encoder_fuse_level, decoder_fuse_level):
     encoder, binarizer, decoder, unet = model
     res, _, _, flows = cooked_batch
+    res_orig, _, _, _ = cooked_batch_orig
 
     ctx_frames = Variable(ctx_frames.cuda()) - 0.5
     frame1 = ctx_frames[:, :3]
@@ -225,7 +229,7 @@ def forward_model(model, cooked_batch, ctx_frames, args, v_compress,
      _, _, _ , _) = init_rnn(batch_size, height, width, args)
 
 
-    original = res.data.cpu().numpy() + 0.5
+    original = res_orig.data.cpu().numpy() + 0.5
 
     out_img = torch.zeros(1, 3, height, width) + 0.5
     out_imgs = []

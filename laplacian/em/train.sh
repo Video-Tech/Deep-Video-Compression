@@ -45,7 +45,6 @@ fi
 python3 -u train.py \
   --train ${train} \
   --eval ${eval} \
-  --iterations 10 \
   --train-mv ${train_mv} \
   --eval-mv ${eval_mv} \
   --encoder-fuse-level ${encoder_fuse_level} \
@@ -55,6 +54,8 @@ python3 -u train.py \
   --distance1 ${distance1} --distance2 ${distance2} \
   --max-train-iters 20000 \
   --save-model-name "wunet_32" \
+  --load-model-name "wunet_32" \
+  --load-iter 20000 \
   --save-out-img \
   --save-codes \
   --eval-iters 5000

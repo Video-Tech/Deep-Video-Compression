@@ -174,9 +174,9 @@ while True:
                 codes, decoder_h_1, decoder_h_2, decoder_h_3, decoder_h_4)
 
             res_g = res_g - output
-            res = res - output
+            res1 = res - output
             out_img = out_img + output.data
-            losses.append(res.abs().mean())
+            losses.append(res1.abs().mean())
 
         bp_t1 = time.time()
 

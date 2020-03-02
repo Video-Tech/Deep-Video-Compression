@@ -214,9 +214,9 @@ while True:
 
             res_l = res_l - output
             res_g = res_g - output
-            res = res - output
+            res1 = res - output
             out_img = out_img + output.data
-            losses.append(res.abs().mean())
+            losses.append(res1.abs().mean())
 
         bp_t1 = time.time()
 
@@ -247,7 +247,7 @@ while True:
         if train_iter % args.checkpoint_iters == 0:
             save(train_iter)
 
-        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 20001:
+        if just_resumed or train_iter % args.eval_iters == 0 or train_iter == 100:
             print('Start evaluation...')
             torch.save(encoder, '{}wunet_64x32_encoder_{}'.format('./model/', train_iter) )
             torch.save(binarizer, '{}wunet_64x32_binarizer_{}'.format('./model/', train_iter) )
